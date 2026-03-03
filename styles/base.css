@@ -1,0 +1,81 @@
+/* RESET Y VARIABLES */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #101520;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #004cbf;
+    --accent-2: #22d3ee;
+    --border: #1f2937;
+    --shadow: 0 20px 50px rgba(0,0,0,0.35);
+    --radius: 14px;
+    --content-width: 1100px;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+    background: radial-gradient(circle at 20% 20%, rgba(167, 181, 240, 0.15), transparent 35%), var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+/* HEADER & NAV */
+header {
+    position: sticky; top: 0; z-index: 10;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background: rgba(16, 21, 32, 0.8);
+}
+
+.nav-container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 14px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;            /* stack icon over text */
+    align-items: center;
+    gap: 2px;                          /* very little spacing */
+    font-weight: 700;
+    position: relative;                /* for z-index control */
+}
+
+/* make the logo graphic bigger */
+.logo-icon {
+    width: 60px;                       /* increased size */
+    height: auto;
+    z-index: 0;
+}
+
+/* reduce line-height on logo text so it sits tight under the icon */
+.logo .logo-text {
+    line-height: 1;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 1;                        /* ensure text sits above if overlapping */
+    top: -10px;                         /* nudge text up slightly to overlap icon if desired */
+}
+
+.nav-links { display: flex; gap: 20px; }
+.nav-links a { text-decoration: none; color: var(--muted); font-size: 0.95rem; transition: 0.3s; }
+.nav-links a:hover { color: var(--text); }
+
+/* BOTONES */
+.solid, .ghost {
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.solid { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; }
+.ghost { border: 1px solid var(--border); color: var(--text); }
+.solid:hover { opacity: 0.9; transform: translateY(-2px); }

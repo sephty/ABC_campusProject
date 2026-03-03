@@ -1,0 +1,36 @@
+main {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 40px 22px;
+}
+
+.hero {
+    padding: 60px 40px;
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(34,211,238,0.05));
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+}
+
+.hero h1 { font-size: 3rem; margin-bottom: 20px; line-height: 1.2; }
+.lead { color: var(--muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
+
+/* GRID DE CURSOS */
+.courses-section { margin-top: 80px; }
+.section-header { margin-bottom: 40px; text-align: left; }
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* Estilo para las futuras tarjetas que creará JS */
+.course-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: var(--radius);
+    transition: 0.3s;
+}
+.course-card:hover { border-color: var(--accent-2); }
