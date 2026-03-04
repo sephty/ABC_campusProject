@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Learning Hub</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/index.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="imgs/image.png" alt="Logo" class="logo-icon">
+            <span>Dashboard</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="active"><i class="icon-dash"></i> Dashboard</a>
+            <a href="#"><i class="icon-course"></i> Gestión de Cursos</a>
+            <a href="#"><i class="icon-user"></i> Docentes</a>
+            <a href="#"><i class="icon-admin"></i> Administrativos</a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-session">Nombre Usuario</button>
+        </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="dashboard-main">
+        <header class="top-bar">
+            <h2>Panel de Control</h2>
+            <div class="user-info">
+                <span>Admin Principal</span>
+                <div class="avatar"></div>
+            </div>
+        </header>
+
+        <!-- RESUMEN DE ESTADÍSTICAS -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <h3>Cursos Activos</h3>
+                <p class="stat-number">12</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Docentes</h3>
+                <p class="stat-number">8</p>
+            </div>
+            <div class="stat-card">
+                <h3>Estudiantes</h3>
+                <p class="stat-number">156</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h3>Gestión de Cursos</h3>
+                <button class="solid">+ Crear Nuevo Curso</button>
+            </div>
+
+            <div class="courses-list">
+                <!-- EJEMPLO DE UN CURSO ESTRUCTURADO -->
+                <article class="course-admin-card">
+                    <div class="course-main-info">
+                        <div class="course-text">
+                            <span class="course-code">COD-102</span>
+                            <h4>Desarrollo Web Fullstack</h4>
+                            <p>Docente: <strong>Ing. Maria Pérez</strong></p>
+                        </div>
+                        <div class="course-actions">
+                            <button class="btn-edit">Editar</button>
+                            <button class="btn-delete">Eliminar</button>
+                        </div>
+                    </div>
+ 
+                    <div class="course-details-preview">
+                        <h5>Módulos y Lecciones:</h5>
+                        <div class="module-item">
+                            <h6>Módulo 1: Fundamentos de HTML & CSS</h6>
+                            <ul class="lesson-list">
+                                <li>• Lección 1: Estructura Semántica (2h)</li>
+                                <li>• Lección 2: Flexbox y Grid (4h)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+                <!-- Fin del ejemplo -->
+            </div>
+        </section>
+    </main>
+</div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
