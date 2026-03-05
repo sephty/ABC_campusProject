@@ -1,81 +1,109 @@
-/* RESET Y VARIABLES */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
-    --bg: #101520;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --accent: #004cbf;
-    --accent-2: #22d3ee;
-    --border: #1f2937;
-    --shadow: 0 20px 50px rgba(0,0,0,0.35);
-    --radius: 14px;
-    --content-width: 1100px;
-    font-family: 'Inter', system-ui, sans-serif;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f6f9;
+  --text-primary: #1a1a2e;
+  --text-secondary: #5a5a7a;
+  --accent: #4f46e5;
+  --accent-hover: #3730a3;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --sidebar-bg: #1a1a2e;
+  --sidebar-text: #e2e8f0;
+  --sidebar-active: #4f46e5;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --radius: 0.5rem;
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --accent: #818cf8;
+  --accent-hover: #6366f1;
+  --card-bg: #1e1e32;
+  --border: #2d2d4e;
+  --sidebar-bg: #0a0a14;
+  --sidebar-text: #e2e8f0;
+  --sidebar-active: #818cf8;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 body {
-    background: radial-gradient(circle at 20% 20%, rgba(167, 181, 240, 0.15), transparent 35%), var(--bg);
-    color: var(--text);
-    line-height: 1.6;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-/* HEADER & NAV */
-header {
-    position: sticky; top: 0; z-index: 10;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    background: rgba(16, 21, 32, 0.8);
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
-.nav-container {
-    max-width: var(--content-width);
-    margin: 0 auto;
-    padding: 14px 22px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.solid,
+.ghost,
+.btn-edit,
+.btn-delete,
+.btn-session,
+.btn-menu {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  transition: var(--transition);
 }
 
-.logo {
-    display: flex;
-    flex-direction: column;            /* stack icon over text */
-    align-items: center;
-    gap: 2px;                          /* very little spacing */
-    font-weight: 700;
-    position: relative;                /* for z-index control */
+.solid {
+  background: var(--accent);
+  color: #ffffff;
 }
 
-/* make the logo graphic bigger */
-.logo-icon {
-    width: 60px;                       /* increased size */
-    height: auto;
-    z-index: 0;
+.solid:hover {
+  background: var(--accent-hover);
 }
 
-/* reduce line-height on logo text so it sits tight under the icon */
-.logo .logo-text {
-    line-height: 1;
-    font-size: 0.95rem;
-    position: relative;
-    z-index: 1;                        /* ensure text sits above if overlapping */
-    top: -10px;                         /* nudge text up slightly to overlap icon if desired */
+.ghost {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border);
 }
 
-.nav-links { display: flex; gap: 20px; }
-.nav-links a { text-decoration: none; color: var(--muted); font-size: 0.95rem; transition: 0.3s; }
-.nav-links a:hover { color: var(--text); }
-
-/* BOTONES */
-.solid, .ghost {
-    padding: 10px 20px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.3s;
-    display: inline-block;
+.btn-delete {
+  color: #ef4444;
+  background: transparent;
 }
 
-.solid { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; }
-.ghost { border: 1px solid var(--border); color: var(--text); }
-.solid:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-edit {
+  color: var(--accent);
+  background: transparent;
+}
+
+.oculto {
+  display: none !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dashboard-container {
+  animation: fadeIn 0.45s ease forwards;
+}
+
+.seccion-fade {
+  animation: fadeIn 0.3s ease forwards;
+}

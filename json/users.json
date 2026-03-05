@@ -1,0 +1,48 @@
+{
+  "administrativos": [
+    {
+      "id": "ADM-001",
+      "identificacion": "1010101010",
+      "nombres": "Carlos",
+      "apellidos": "Ramirez",
+      "email": "carlos.ramirez@abc.edu.co",
+      "password": "admin123",
+      "telefono": "3001234567",
+      "cargo": "Coordinador Académico",
+      "avatarUrl": ""
+    },
+    {
+      "id": "ADM-002",
+      "identificacion": "4040404040",
+      "nombres": "Laura",
+      "apellidos": "Castro",
+      "email": "laura.castro@abc.edu.co",
+      "password": "admin456",
+      "telefono": "3011112233",
+      "cargo": "Auxiliar Administrativo",
+      "avatarUrl": ""
+    }
+  ],
+  "docentes": [
+    {
+      "id": "DOC-001",
+      "codigo": "D001",
+      "identificacion": "2020202020",
+      "nombres": "Maria",
+      "apellidos": "Perez",
+      "email": "maria.perez@abc.edu.co",
+      "areaAcademica": "Informatica",
+      "fotoUrl": ""
+    },
+    {
+      "id": "DOC-002",
+      "codigo": "D002",
+      "identificacion": "3030303030",
+      "nombres": "Jorge",
+      "apellidos": "Mendoza",
+      "email": "jorge.mendoza@abc.edu.co",
+      "areaAcademica": "Biologia",
+      "fotoUrl": ""
+    }
+  ]
+}

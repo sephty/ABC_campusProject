@@ -1,65 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC Campus | Dashboard</title>
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/dashboard.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABC Campus | Vista Dashboard</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
 </head>
-<body data-page="dashboard">
-<div class="dashboard-container">
+<body>
+  <div class="dashboard-container">
     <aside class="sidebar">
-        <div class="sidebar-header">
-            <img src="imgs/image.png" alt="Logo ABC Campus" class="logo-icon">
-            <span>ABC Campus</span>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="#" class="active" data-section="dashboard">
-                <img src="imgs/icons/dashboard.svg" alt="Dashboard">
-                <span>Dashboard</span>
-            </a>
-            <a href="#" data-section="cursos">
-                <img src="imgs/icons/cursos.svg" alt="Cursos">
-                <span>Gestión de Cursos</span>
-            </a>
-            <a href="#" data-section="docentes">
-                <img src="imgs/icons/docentes.svg" alt="Docentes">
-                <span>Docentes</span>
-            </a>
-            <a href="#" data-section="admins">
-                <img src="imgs/icons/admins.svg" alt="Administrativos">
-                <span>Administrativos</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <button id="btn-session" class="btn-session" type="button">Mi sesión</button>
-            <div id="session-panel" class="session-panel hidden"></div>
-        </div>
+      <div class="sidebar-header">
+        <img src="imgs/image.png" alt="Logo ABC Campus" class="logo-icon">
+        <span>Dashboard</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="admin.html" class="active">Ir al panel administrativo</a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-session" type="button">Vista base de diseño</button>
+      </div>
     </aside>
 
     <main class="dashboard-main">
-        <header class="top-bar">
-            <div class="top-bar-left">
-                <button id="btn-sidebar" class="btn-sidebar" type="button">
-                    <img src="imgs/icons/menu.svg" alt="Abrir menú">
-                </button>
-                <h2>Panel de Control</h2>
+      <header class="top-bar">
+        <h2>Base visual del dashboard</h2>
+      </header>
+
+      <section class="stats-grid">
+        <div class="stat-card">
+          <h3>Componente</h3>
+          <p class="stat-number">Sidebar</p>
+        </div>
+        <div class="stat-card">
+          <h3>Componente</h3>
+          <p class="stat-number">Top bar</p>
+        </div>
+        <div class="stat-card">
+          <h3>Componente</h3>
+          <p class="stat-number">Content</p>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h3>Esta página queda como referencia del diseño</h3>
+        </div>
+        <article class="course-admin-card">
+          <div class="course-main-info">
+            <div class="course-text">
+              <span class="course-code">INFO</span>
+              <h4>Usa admin.html para trabajar el panel funcional</h4>
+              <p>Esta vista no se elimina para mantener archivos existentes.</p>
             </div>
-            <div class="top-bar-actions">
-                <button id="btn-theme" class="ghost" type="button">Cambiar tema</button>
-                <a class="ghost" href="admin.html">Vista admin</a>
-            </div>
-        </header>
-        <div id="main-content"></div>
+          </div>
+        </article>
+      </section>
     </main>
-</div>
-
-<div id="toast-container" class="toast-container"></div>
-
-<script src="js/data/store.js"></script>
-<script src="js/services/main.js"></script>
-<script src="js/services/admin.js"></script>
-
+  </div>
 </body>
 </html>

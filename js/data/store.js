@@ -1,49 +1,22 @@
-// Gestiona toda la persistencia local del proyecto.
+// Maneja toda la persistencia del proyecto en localStorage.
 const Store = {
-  getSession: () => {
-    return JSON.parse(localStorage.getItem('session')) || null;
-  },
+  getSession: () => JSON.parse(localStorage.getItem('session')) || null,
+  saveSession: (usuario) => localStorage.setItem('session', JSON.stringify(usuario)),
+  clearSession: () => localStorage.removeItem('session'),
 
-  saveSession: (usuario) => {
-    localStorage.setItem('session', JSON.stringify(usuario));
-  },
+  getDocentes: () => JSON.parse(localStorage.getItem('docentes')) || [],
+  saveDocentes: (docentes) => localStorage.setItem('docentes', JSON.stringify(docentes)),
 
-  clearSession: () => {
-    localStorage.removeItem('session');
-  },
+  getAdmins: () => JSON.parse(localStorage.getItem('admins')) || [],
+  saveAdmins: (admins) => localStorage.setItem('admins', JSON.stringify(admins)),
 
-  getTema: () => {
-    return localStorage.getItem('tema') || 'light';
-  },
+  getCursos: () => JSON.parse(localStorage.getItem('cursos')) || [],
+  saveCursos: (cursos) => localStorage.setItem('cursos', JSON.stringify(cursos)),
 
-  saveTema: (tema) => {
-    localStorage.setItem('tema', tema);
-  },
+  getTema: () => localStorage.getItem('tema') || 'light',
+  saveTema: (tema) => localStorage.setItem('tema', tema),
 
-  getDocentes: () => {
-    return JSON.parse(localStorage.getItem('docentes')) || [];
-  },
-
-  saveDocentes: (docentes) => {
-    localStorage.setItem('docentes', JSON.stringify(docentes));
-  },
-
-  getAdmins: () => {
-    return JSON.parse(localStorage.getItem('admins')) || [];
-  },
-
-  saveAdmins: (admins) => {
-    localStorage.setItem('admins', JSON.stringify(admins));
-  },
-
-  getCursos: () => {
-    return JSON.parse(localStorage.getItem('cursos')) || [];
-  },
-
-  saveCursos: (cursos) => {
-    localStorage.setItem('cursos', JSON.stringify(cursos));
-  },
-
+  // Inicializa datos semilla si no existen en el navegador.
   initFromJSON: async () => {
     if (!localStorage.getItem('cursos')) {
       const respuestaCursos = await fetch('json/courses.json');

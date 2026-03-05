@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC Campus | Login</title>
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/login.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABC Campus | Acceso Administrativo</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/index.css">
 </head>
 <body class="login-page">
-    <main class="login-layout">
-        <section class="login-card">
-            <img src="imgs/image.png" alt="Logo ABC Campus" class="login-logo">
-            <h1>ABC Campus</h1>
-            <p class="login-subtitle">Ingreso administrativo</p>
+  <main class="login-wrapper">
+    <section class="login-card">
+      <div class="login-header">
+        <img src="imgs/image.png" alt="Logo ABC Campus" class="login-logo">
+        <h1>ABC Campus</h1>
+        <p>Ingreso exclusivo para administrativos</p>
+      </div>
 
-            <form id="login-form" class="login-form">
-                <label for="email">Correo institucional</label>
-                <input id="email" name="email" type="email" required>
+      <form id="login-form" class="login-form" novalidate>
+        <label for="email">Correo institucional</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
 
-                <label for="password">Contraseña</label>
-                <input id="password" name="password" type="password" required>
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
 
-                <p id="login-error" class="login-error" aria-live="polite"></p>
-                <button type="submit" class="solid btn-login">Ingresar</button>
-            </form>
-        </section>
-    </main>
+        <p id="login-error" class="inline-error" aria-live="polite"></p>
 
-    <script src="js/data/store.js"></script>
-    <script src="js/services/main.js"></script>
-    <script src="js/services/login.js"></script>
+        <button type="submit" class="solid">Ingresar al panel</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/data/store.js"></script>
+  <script src="js/services/login.js"></script>
 </body>
 </html>

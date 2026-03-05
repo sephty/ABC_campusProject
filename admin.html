@@ -1,12 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC - Login Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABC Campus | Panel Administrativo</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/admin.css">
 </head>
 <body>
-    
-    
+  <div class="dashboard-container">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <img src="imgs/image.png" alt="Logo ABC Campus" class="logo-icon">
+        <span>ABC Campus</span>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <a href="#" class="active" data-section="dashboard">Dashboard</a>
+        <a href="#" data-section="cursos">Gestión de Cursos</a>
+        <a href="#" data-section="docentes">Docentes</a>
+        <a href="#" data-section="admins">Administrativos</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="btn-session" class="btn-session" type="button">Sesión activa</button>
+        <div id="session-panel" class="session-panel oculto"></div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button id="btn-menu" class="btn-menu" type="button">Menú</button>
+          <h2 id="top-title">Panel de Control</h2>
+        </div>
+        <div class="top-actions">
+          <button id="btn-theme" class="ghost" type="button">Cambiar tema</button>
+        </div>
+      </header>
+
+      <div id="main-content"></div>
+    </main>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toast-root"></div>
+
+  <script src="js/data/store.js"></script>
+  <script src="js/services/admin.js"></script>
 </body>
 </html>

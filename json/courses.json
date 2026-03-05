@@ -1,0 +1,45 @@
+{
+  "cursos": [
+    {
+      "id": "CRS-001",
+      "codigo": "COD-101",
+      "nombre": "Desarrollo Web Fullstack",
+      "descripcion": "Curso completo de desarrollo web desde fundamentos hasta nivel avanzado.",
+      "categoria": "Informatica",
+      "etiquetas": ["html", "css", "javascript"],
+      "duracion": "120h",
+      "visibilidad": "publico",
+      "estado": "activo",
+      "fechaCreacion": "2025-01-15",
+      "docenteId": "DOC-001",
+      "modulos": [
+        {
+          "id": "MOD-001",
+          "codigo": "M001",
+          "nombre": "Fundamentos de HTML y CSS",
+          "descripcion": "Estructura semántica, estilos y diseño responsive.",
+          "lecciones": [
+            {
+              "id": "LEC-001",
+              "titulo": "Estructura Semántica",
+              "intensidadHoraria": 2,
+              "contenido": "En esta lección aprenderemos la estructura base de un documento HTML.",
+              "multimedia": [
+                {
+                  "tipo": "video",
+                  "url": "https://youtube.com/example",
+                  "nombre": "Intro a HTML"
+                },
+                {
+                  "tipo": "enlace",
+                  "url": "https://developer.mozilla.org",
+                  "nombre": "MDN Web Docs"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
