@@ -9,7 +9,7 @@
       "password": "admin123",
       "telefono": "3001234567",
       "cargo": "Coordinador Académico",
-      "avatarUrl": ""
+      "avatarUrl": "imgs/docentes/image6.jpg"
     },
     {
       "id": "ADM-002",
@@ -31,8 +31,9 @@
       "nombres": "Maria",
       "apellidos": "Perez",
       "email": "maria.perez@abc.edu.co",
+      "password": "docente123",
       "areaAcademica": "Informatica",
-      "fotoUrl": ""
+      "fotoUrl": "imgs/docentes/maria.png"
     },
     {
       "id": "DOC-002",
@@ -41,8 +42,42 @@
       "nombres": "Jorge",
       "apellidos": "Mendoza",
       "email": "jorge.mendoza@abc.edu.co",
-      "areaAcademica": "Biologia",
-      "fotoUrl": ""
+      "password": "docente123",
+      "areaAcademica": "ingles",
+      "fotoUrl": "imgs/docentes/jorge.png"
+    },
+    {
+      "id": "DOC-003",
+      "codigo": "D003",
+      "identificacion": "5050505050",
+      "nombres": "Juan",
+      "apellidos": "Garcia",
+      "email": "juan.garcia@abc.edu.co",
+      "password": "docente123",
+      "areaAcademica": "Matematicas",
+      "fotoUrl": "imgs/docentes/juan.png"
+    },
+    {
+      "id": "DOC-004",
+      "codigo": "D004",
+      "identificacion": "6060606060",
+      "nombres": "Patricia",
+      "apellidos": "Rodriguez",
+      "email": "patricia.rodriguez@abc.edu.co",
+      "password": "docente123",
+      "areaAcademica": "Idiomas",
+      "fotoUrl": "imgs/docentes/patricia.png"
+    },
+    {
+      "id": "DOC-005",
+      "codigo": "D005",
+      "identificacion": "7070707070",
+      "nombres": "Roberto",
+      "apellidos": "Lopez",
+      "email": "roberto.lopez@abc.edu.co",
+      "password": "docente123",
+      "areaAcademica": "Fisica",
+      "fotoUrl": "imgs/docentes/roberto.png"
     }
   ]
 }

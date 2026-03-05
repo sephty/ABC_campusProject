@@ -1,21 +1,29 @@
+/**
+ * LOGIN - Autenticación de administrativos y docentes.
+ */
+
 // Aplica el tema guardado antes de renderizar la vista.
 function aplicarTemaInicial() {
   document.documentElement.setAttribute('data-theme', Store.getTema());
 }
 
-// Valida credenciales contra la lista de administrativos.
+// Busca un administrativo por email y password. Retorna el objeto o null.
 function autenticarAdmin(email, password) {
-  const admins = Store.getAdmins();
-  return admins.find((admin) => admin.email === email && admin.password === password) || null;
+  return Store.getAdmins().find((a) => a.email === email && a.password === password) || null;
 }
 
-// Muestra un mensaje de error en el formulario.
+// Busca un docente por email y password. Retorna el objeto o null.
+function autenticarDocente(email, password) {
+  return Store.getDocentes().find((d) => d.email === email && d.password === password) || null;
+}
+
+// Muestra un mensaje de error inline bajo el formulario.
 function mostrarError(mensaje) {
   const error = document.getElementById('login-error');
-  error.textContent = mensaje;
+  if (error) error.textContent = mensaje;
 }
 
-// Configura el formulario de inicio de sesión.
+// Configura el evento submit del formulario de login.
 function configurarFormularioLogin() {
   const form = document.getElementById('login-form');
 
@@ -30,25 +38,36 @@ function configurarFormularioLogin() {
       return;
     }
 
+    // Intenta como administrativo primero
     const admin = autenticarAdmin(email, password);
-
-    if (!admin) {
-      mostrarError('Credenciales inválidas para acceso administrativo.');
+    if (admin) {
+      Store.saveSession({ ...admin, rol: 'admin' });
+      window.location.href = 'admin.html';
       return;
     }
 
-    Store.saveSession(admin);
-    window.location.href = 'admin.html';
+    // Intenta como docente
+    const docente = autenticarDocente(email, password);
+    if (docente) {
+      Store.saveSession({ ...docente, rol: 'docente' });
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    mostrarError('Correo o contraseña incorrectos.');
   });
 }
 
-// Inicializa la pantalla de login con datos base.
+// Inicializa la página de login: carga datos y verifica si ya hay sesión activa.
 async function iniciarLogin() {
   aplicarTemaInicial();
   await Store.initFromJSON();
 
-  if (Store.getSession()) {
-    window.location.href = 'admin.html';
+  // Si ya hay sesión, redirige al panel correspondiente sin mostrar el login
+  const sesion = Store.getSession();
+  if (sesion) {
+    const esAdmin = sesion.rol === 'admin' || sesion.id?.startsWith('ADM-') || !!sesion.cargo;
+    window.location.href = esAdmin ? 'admin.html' : 'dashboard.html';
     return;
   }
 

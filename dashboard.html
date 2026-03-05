@@ -3,60 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ABC Campus | Vista Dashboard</title>
+  <title>ABC Campus | Dashboard Docentes</title>
   <link rel="stylesheet" href="styles/base.css">
-  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/admin.css">
 </head>
 <body>
   <div class="dashboard-container">
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
         <img src="imgs/image.png" alt="Logo ABC Campus" class="logo-icon">
-        <span>Dashboard</span>
+        <span>ABC Campus</span>
       </div>
-      <nav class="sidebar-nav">
-        <a href="admin.html" class="active">Ir al panel administrativo</a>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <a href="#" class="active" data-section="dashboard">Dashboard</a>
+        <a href="#" data-section="misCursos">Mis Cursos</a>
+        <a href="#" data-section="miPerfil">Mi Perfil</a>
+        <a href="#" data-section="todosLosCursos">Todos los Cursos</a>
+        <a href="#" data-section="docentes">Docentes</a>
       </nav>
+
       <div class="sidebar-footer">
-        <button class="btn-session" type="button">Vista base de diseño</button>
+        <button id="btn-theme" class="theme-toggle" type="button">
+          <span id="theme-icon" class="theme-icon">🌙</span>
+          <span id="theme-text" class="theme-text">Modo Oscuro</span>
+        </button>
+        <button id="btn-session" class="btn-session" type="button">Sesión</button>
+        <div id="session-panel" class="session-panel oculto"></div>
       </div>
     </aside>
 
     <main class="dashboard-main">
       <header class="top-bar">
-        <h2>Base visual del dashboard</h2>
+        <div class="top-bar-left">
+          <button id="btn-menu" class="btn-menu" type="button">Menú</button>
+          <h2 id="top-title">Panel de Control</h2>
+        </div>
       </header>
 
-      <section class="stats-grid">
-        <div class="stat-card">
-          <h3>Componente</h3>
-          <p class="stat-number">Sidebar</p>
-        </div>
-        <div class="stat-card">
-          <h3>Componente</h3>
-          <p class="stat-number">Top bar</p>
-        </div>
-        <div class="stat-card">
-          <h3>Componente</h3>
-          <p class="stat-number">Content</p>
-        </div>
-      </section>
-
-      <section class="content-section">
-        <div class="section-header">
-          <h3>Esta página queda como referencia del diseño</h3>
-        </div>
-        <article class="course-admin-card">
-          <div class="course-main-info">
-            <div class="course-text">
-              <span class="course-code">INFO</span>
-              <h4>Usa admin.html para trabajar el panel funcional</h4>
-              <p>Esta vista no se elimina para mantener archivos existentes.</p>
-            </div>
-          </div>
-        </article>
-      </section>
+      <div id="main-content"></div>
     </main>
   </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toast-root"></div>
+
+  <script src="js/data/store.js"></script>
+  <script src="js/utils/docenteHelpers.js"></script>
+  <script src="js/ui/docenteUI.js"></script>
+  <script src="js/services/docente-main.js"></script>
 </body>
 </html>

@@ -23,7 +23,8 @@
       </nav>
 
       <div class="sidebar-footer">
-        <button id="btn-session" class="btn-session" type="button">Sesión activa</button>
+        <button id="btn-session" class="btn-session" type="button">Sesión</button>
+        <button id="btn-theme" class="ghost" type="button">Cambiar tema</button>
         <div id="session-panel" class="session-panel oculto"></div>
       </div>
     </aside>
@@ -33,9 +34,6 @@
         <div class="top-bar-left">
           <button id="btn-menu" class="btn-menu" type="button">Menú</button>
           <h2 id="top-title">Panel de Control</h2>
-        </div>
-        <div class="top-actions">
-          <button id="btn-theme" class="ghost" type="button">Cambiar tema</button>
         </div>
       </header>
 
@@ -47,6 +45,12 @@
   <div id="toast-root" class="toast-root"></div>
 
   <script src="js/data/store.js"></script>
-  <script src="js/services/admin.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/utils/validation.js"></script>
+  <script src="js/utils/modal.js"></script>
+  <script src="js/ui/coursesUI.js"></script>
+  <script src="js/ui/teachersUI.js"></script>
+  <script src="js/ui/adminsUI.js"></script>
+  <script src="js/services/main.js"></script>
 </body>
 </html>

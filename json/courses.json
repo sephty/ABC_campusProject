@@ -4,7 +4,7 @@
       "id": "CRS-001",
       "codigo": "COD-101",
       "nombre": "Desarrollo Web Fullstack",
-      "descripcion": "Curso completo de desarrollo web desde fundamentos hasta nivel avanzado.",
+      "descripcion": "Curso completo de desarrollo web desde fundamentos hasta nivel avanzado con JavaScript, HTML y CSS.",
       "categoria": "Informatica",
       "etiquetas": ["html", "css", "javascript"],
       "duracion": "120h",
@@ -12,6 +12,7 @@
       "estado": "activo",
       "fechaCreacion": "2025-01-15",
       "docenteId": "DOC-001",
+      "estudiantes": [],
       "modulos": [
         {
           "id": "MOD-001",
@@ -36,6 +37,177 @@
                   "nombre": "MDN Web Docs"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "id": "MOD-002",
+          "codigo": "M002",
+          "nombre": "Programación con JavaScript",
+          "descripcion": "Fundamentos y conceptos avanzados de JavaScript para desarrollo web.",
+          "lecciones": [
+            {
+              "id": "LEC-002",
+              "titulo": "Variables y Tipos de Datos",
+              "intensidadHoraria": 3,
+              "contenido": "Aprendemos sobre var, let, const y los diferentes tipos de datos en JavaScript.",
+              "multimedia": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CRS-006",
+      "codigo": "COD-201",
+      "nombre": "Programacion Python Avanzada",
+      "descripcion": "Python avanzado: POO, decoradores, async, frameworks. Desarrollo de aplicaciones backend robustas.",
+      "categoria": "Informatica",
+      "etiquetas": ["python", "programacion", "backend"],
+      "duracion": "130h",
+      "visibilidad": "publico",
+      "estado": "activo",
+      "fechaCreacion": "2025-02-15",
+      "docenteId": "DOC-001",
+      "estudiantes": [],
+      "modulos": [
+        {
+          "id": "MOD-003",
+          "codigo": "M003",
+          "nombre": "Fundamentos de Python",
+          "descripcion": "Introducción a sintaxis, variables, funciones y estructuras de control.",
+          "lecciones": [
+            {
+              "id": "LEC-003",
+              "titulo": "Sintaxis Básica y Variables",
+              "intensidadHoraria": 3,
+              "contenido": "Aprenderemos la sintaxis de Python y cómo trabajar con variables.",
+              "multimedia": [
+                {
+                  "tipo": "video",
+                  "url": "https://youtube.com/python-basics",
+                  "nombre": "Python Basics Tutorial"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MOD-004",
+          "codigo": "M004",
+          "nombre": "Programación Orientada a Objetos",
+          "descripcion": "Clases, herencia, polimorfismo y encapsulamiento en Python.",
+          "lecciones": [
+            {
+              "id": "LEC-004",
+              "titulo": "Introducción a Clases",
+              "intensidadHoraria": 4,
+              "contenido": "Definición y uso de clases en Python.",
+              "multimedia": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CRS-007",
+      "codigo": "COD-202",
+      "nombre": "Bases de Datos SQL",
+      "descripcion": "Diseño y optimización de bases de datos relacionales con SQL. Queries avanzadas y performance.",
+      "categoria": "Informatica",
+      "etiquetas": ["sql", "basesdatos", "backend"],
+      "duracion": "95h",
+      "visibilidad": "publico",
+      "estado": "activo",
+      "fechaCreacion": "2025-02-20",
+      "docenteId": "DOC-003",
+      "estudiantes": [],
+      "modulos": [
+        {
+          "id": "MOD-005",
+          "codigo": "M005",
+          "nombre": "Fundamentos de SQL y Bases de Datos",
+          "descripcion": "Introducción a SQL, tablas, queries básicas y relaciones.",
+          "lecciones": [
+            {
+              "id": "LEC-005",
+              "titulo": "Crear y Manipular Tablas",
+              "intensidadHoraria": 4,
+              "contenido": "Aprendemos CREATE, INSERT, UPDATE, DELETE en SQL.",
+              "multimedia": [
+                {
+                  "tipo": "video",
+                  "url": "https://youtube.com/sql-tutorial",
+                  "nombre": "SQL Complete Guide"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MOD-006",
+          "codigo": "M006",
+          "nombre": "Queries Avanzadas y Optimización",
+          "descripcion": "JOINs, subconsultas, índices y optimización de performance.",
+          "lecciones": [
+            {
+              "id": "LEC-006",
+              "titulo": "JOINs y Subconsultas",
+              "intensidadHoraria": 5,
+              "contenido": "Técnicas avanzadas para consultas complejas en SQL.",
+              "multimedia": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CRS-008",
+      "codigo": "COD-203",
+      "nombre": "Inglés Técnico para Programadores",
+      "descripcion": "Inglés enfocado en documentación técnica, comunicación profesional y lectura de código.",
+      "categoria": "Idiomas",
+      "etiquetas": ["english", "technical", "programming"],
+      "duracion": "60h",
+      "visibilidad": "publico",
+      "estado": "activo",
+      "fechaCreacion": "2025-02-25",
+      "docenteId": "DOC-004",
+      "estudiantes": [],
+      "modulos": [
+        {
+          "id": "MOD-007",
+          "codigo": "M007",
+          "nombre": "Vocabulario Técnico en Inglés",
+          "descripcion": "Términos y frases comunes en documentación técnica y código.",
+          "lecciones": [
+            {
+              "id": "LEC-007",
+              "titulo": "Terminología de Programación",
+              "intensidadHoraria": 3,
+              "contenido": "Aprenderemos vocabulario específico usado en development, APIs, y frameworks.",
+              "multimedia": [
+                {
+                  "tipo": "enlace",
+                  "url": "https://docs.github.com",
+                  "nombre": "GitHub Documentation"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MOD-008",
+          "codigo": "M008",
+          "nombre": "Lectura y Escritura Técnica",
+          "descripcion": "Redacción de comentarios de código, READMEs y documentación profesional.",
+          "lecciones": [
+            {
+              "id": "LEC-008",
+              "titulo": "Escribiendo Documentación Clara",
+              "intensidadHoraria": 3,
+              "contenido": "Mejores prácticas para documentar código y proyectos.",
+              "multimedia": []
             }
           ]
         }
