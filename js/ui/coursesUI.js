@@ -3,7 +3,7 @@
  * CRUD completo: cursos, módulos y lecciones anidados.
  */
 
-// Abre formulario modal para crear o editar un curso.
+// Abre formulario modal para crear o editar un curso. Permite asignar docente y configurar estado/visibilidad.
 function abrirFormularioCurso(cursoActual = null) {
   const { form, cerrar } = abrirModal(cursoActual ? 'Editar curso' : 'Nuevo curso');
   const docentes = Store.getDocentes();
@@ -31,6 +31,11 @@ function abrirFormularioCurso(cursoActual = null) {
   inputDuracion.placeholder = 'ej: 120h';
   inputDuracion.value = cursoActual?.duracion || '';
 
+  const inputIconUrl = document.createElement('input');
+  inputIconUrl.type = 'text';
+  inputIconUrl.placeholder = 'imgs/courses/nombre-del-curso.png';
+  inputIconUrl.value = cursoActual?.iconUrl || '';
+  // Si el curso tiene iconUrl pero la imagen no carga, mostrar placeholder con emoji según categoría
   const selectVisibilidad = document.createElement('select');
   ['publico', 'privado'].forEach((val) => {
     const opt = document.createElement('option');
@@ -53,7 +58,7 @@ function abrirFormularioCurso(cursoActual = null) {
     selectEstado.appendChild(opt);
   });
   selectEstado.value = cursoActual?.estado || 'activo';
-
+  // Si el curso está archivado, forzar estado a 'archivado' y deshabilitar select
   const selectDocente = document.createElement('select');
   const optVacio = document.createElement('option');
   optVacio.value = '';
@@ -67,7 +72,7 @@ function abrirFormularioCurso(cursoActual = null) {
   });
   selectDocente.value = cursoActual?.docenteId || '';
   selectDocente.required = true;
-
+  // Si no hay docentes, mostrar mensaje y deshabilitar select
   const acciones = form.querySelector('.modal-actions');
   acciones.before(
     crearCampo('Código', inputCodigo),
@@ -76,6 +81,7 @@ function abrirFormularioCurso(cursoActual = null) {
     crearCampo('Categoría', inputCategoria),
     crearCampo('Etiquetas (separadas por coma)', inputEtiquetas),
     crearCampo('Duración', inputDuracion),
+    crearCampo('URL imagen del curso (imgs/courses/nombre.png)', inputIconUrl),
     crearCampo('Visibilidad', selectVisibilidad),
     crearCampo('Estado', selectEstado),
     crearCampo('Docente asignado', selectDocente)
@@ -83,7 +89,7 @@ function abrirFormularioCurso(cursoActual = null) {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
+    // Validación básica
     const base = {
       id: cursoActual?.id || generarId('CRS'),
       codigo: inputCodigo.value.trim(),
@@ -92,19 +98,17 @@ function abrirFormularioCurso(cursoActual = null) {
       categoria: inputCategoria.value.trim(),
       etiquetas: inputEtiquetas.value.split(',').map((e) => e.trim()).filter(Boolean),
       duracion: inputDuracion.value.trim(),
+      iconUrl: inputIconUrl.value.trim(),
       visibilidad: selectVisibilidad.value,
       estado: selectEstado.value,
       fechaCreacion: cursoActual?.fechaCreacion || new Date().toISOString().slice(0, 10),
       docenteId: selectDocente.value,
-      estudiantes: cursoActual?.estudiantes || [],
+      estudiantes: cursoActual?.estudiantes ?? 0,
       modulos: cursoActual?.modulos || []
     };
 
     const errores = validarCamposRequeridos(base, ['codigo', 'nombre', 'categoria', 'docenteId']);
-    if (errores.length > 0) {
-      mostrarToast(errores.join(' '), 'error');
-      return;
-    }
+    if (errores.length > 0) { mostrarToast(errores.join(' '), 'error'); return; }
 
     const cursos = Store.getCursos();
     const actualizados = cursoActual
@@ -118,7 +122,7 @@ function abrirFormularioCurso(cursoActual = null) {
   });
 }
 
-// Abre formulario para crear o editar un módulo dentro de un curso.
+// Abre formulario para crear/editar un módulo dentro de un curso específico.
 function abrirFormularioModulo(cursoId, moduloActual = null) {
   const { form, cerrar } = abrirModal(moduloActual ? 'Editar módulo' : 'Nuevo módulo');
 
@@ -138,25 +142,19 @@ function abrirFormularioModulo(cursoId, moduloActual = null) {
     crearCampo('Nombre de módulo', inputNombre),
     crearCampo('Descripción', inputDescripcion)
   );
-
+  // Si el módulo ya tiene lecciones, mostrar advertencia de que no se pueden editar código ni eliminar el módulo
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
-    if (!inputNombre.value.trim()) {
-      mostrarToast('El nombre del módulo es obligatorio.', 'error');
-      return;
-    }
+    if (!inputNombre.value.trim()) { mostrarToast('El nombre del módulo es obligatorio.', 'error'); return; }
 
     const cursos = Store.getCursos();
     const actualizados = cursos.map((curso) => {
       if (curso.id !== cursoId) return curso;
-
       const modulos = moduloActual
         ? curso.modulos.map((m) => m.id === moduloActual.id
             ? { ...m, codigo: inputCodigo.value.trim(), nombre: inputNombre.value.trim(), descripcion: inputDescripcion.value.trim() }
             : m)
         : [{ id: generarId('MOD'), codigo: inputCodigo.value.trim(), nombre: inputNombre.value.trim(), descripcion: inputDescripcion.value.trim(), lecciones: [] }, ...curso.modulos];
-
       return { ...curso, modulos };
     });
 
@@ -166,8 +164,7 @@ function abrirFormularioModulo(cursoId, moduloActual = null) {
     renderSeccion('cursos');
   });
 }
-
-// Abre formulario para crear o editar una lección dentro de un módulo.
+// Abre formulario para crear/editar una lección dentro de un módulo específico de un curso.
 function abrirFormularioLeccion(cursoId, moduloId, leccionActual = null) {
   const { form, cerrar } = abrirModal(leccionActual ? 'Editar lección' : 'Nueva lección');
 
@@ -183,25 +180,16 @@ function abrirFormularioLeccion(cursoId, moduloId, leccionActual = null) {
 
   const inputContenido = document.createElement('textarea');
   inputContenido.value = leccionActual?.contenido || '';
-
-  // Bloque de multimedia dinámico
+  // Bloque para gestionar recursos multimedia asociados a la lección
   const bloqueMultimedia = document.createElement('div');
   bloqueMultimedia.className = 'bloque-multimedia';
-
   const labelMultimedia = document.createElement('label');
   labelMultimedia.textContent = 'Recursos multimedia';
   bloqueMultimedia.appendChild(labelMultimedia);
-
   const listaMultimedia = document.createElement('div');
   listaMultimedia.className = 'lista-multimedia';
-
-  // Carga multimedia existente o una fila vacía si es nueva
-  const itemsIniciales = leccionActual?.multimedia?.length
-    ? leccionActual.multimedia
-    : [];
-  itemsIniciales.forEach((item) => listaMultimedia.appendChild(crearLineaMultimedia(item)));
+  (leccionActual?.multimedia || []).forEach((item) => listaMultimedia.appendChild(crearLineaMultimedia(item)));
   bloqueMultimedia.appendChild(listaMultimedia);
-
   const btnAgregarRecurso = document.createElement('button');
   btnAgregarRecurso.className = 'ghost';
   btnAgregarRecurso.type = 'button';
@@ -219,31 +207,24 @@ function abrirFormularioLeccion(cursoId, moduloId, leccionActual = null) {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
-    if (!inputTitulo.value.trim()) {
-      mostrarToast('El título de la lección es obligatorio.', 'error');
-      return;
-    }
-
-    // Lee todos los recursos multimedia de la lista
+    if (!inputTitulo.value.trim()) { mostrarToast('El título de la lección es obligatorio.', 'error'); return; }
+    // Validar que cada recurso multimedia tenga URL y tipo
     const multimedia = [...listaMultimedia.querySelectorAll('.linea-multimedia')].map((fila) => ({
       tipo: fila.querySelector('[name="tipo"]').value,
       url: fila.querySelector('[name="url"]').value.trim(),
       nombre: fila.querySelector('[name="nombre"]').value.trim()
-    })).filter((m) => m.url); // descarta filas sin URL
+    })).filter((m) => m.url);
 
     const cursos = Store.getCursos();
     const actualizados = cursos.map((curso) => {
       if (curso.id !== cursoId) return curso;
       const modulos = curso.modulos.map((modulo) => {
         if (modulo.id !== moduloId) return modulo;
-
         const lecciones = leccionActual
           ? modulo.lecciones.map((lec) => lec.id === leccionActual.id
               ? { ...lec, titulo: inputTitulo.value.trim(), intensidadHoraria: Number(inputIntensidad.value), contenido: inputContenido.value.trim(), multimedia }
               : lec)
           : [{ id: generarId('LEC'), titulo: inputTitulo.value.trim(), intensidadHoraria: Number(inputIntensidad.value), contenido: inputContenido.value.trim(), multimedia }, ...modulo.lecciones];
-
         return { ...modulo, lecciones };
       });
       return { ...curso, modulos };
@@ -255,28 +236,56 @@ function abrirFormularioLeccion(cursoId, moduloId, leccionActual = null) {
     renderSeccion('cursos');
   });
 }
-
-// Construye el badge de estado sin emojis.
+// Validación genérica de campos requeridos, retorna array de mensajes de error.
 function crearBadgeEstado(estado) {
   const span = document.createElement('span');
-  const mapa = {
-    activo:    'badge-activo',
-    inactivo:  'badge-inactivo',
-    pausado:   'badge-pausado',
-    archivado: 'badge-archivado'
-  };
+  const mapa = { activo: 'badge-activo', inactivo: 'badge-inactivo', pausado: 'badge-pausado', archivado: 'badge-archivado' };
   span.className = `badge ${mapa[estado] || 'badge-inactivo'}`;
   span.textContent = estado.charAt(0).toUpperCase() + estado.slice(1);
   return span;
 }
 
-// Renderiza la sección de cursos con tabla, filtros y CRUD anidado.
+// ── Imagen de curso con fallback a placeholder ───────────────────────────────
+function crearImagenCurso(curso) {
+  const wrap = document.createElement('div');
+  wrap.className = 'course-img-wrap';
+  //
+  if (curso.iconUrl) {
+    const img = document.createElement('img');
+    img.className = 'course-img';
+    img.src = curso.iconUrl;
+    img.alt = curso.nombre;
+    img.onerror = () => { img.replaceWith(crearPlaceholderCurso(curso)); };
+    wrap.appendChild(img);
+  } else {
+    wrap.appendChild(crearPlaceholderCurso(curso));
+  }
+  return wrap;
+}
+// Crea un placeholder con emoji según categoría del curso, para usar cuando no hay imagen o falla la carga.
+function crearPlaceholderCurso(curso) {
+  const div = document.createElement('div');
+  div.className = 'course-img-placeholder';
+  const emoji = emojiCategoria(curso.categoria);
+  div.textContent = emoji;
+  return div;
+}
+
+function emojiCategoria(categoria = '') {
+  const cat = categoria.toLowerCase();
+  if (cat.includes('inform') || cat.includes('progr') || cat.includes('tecn')) return '💻';
+  if (cat.includes('idiom') || cat.includes('ingl') || cat.includes('leng')) return '🗣️';
+  if (cat.includes('arte') || cat.includes('diseñ')) return '🎨';
+  if (cat.includes('negoc') || cat.includes('admin')) return '📊';
+  return '📚';
+}
+
+// ── Renderiza sección de cursos ───────────────────────────────────────────────
 function renderCursos() {
   const main = document.getElementById('main-content');
   const seccion = document.createElement('section');
   seccion.className = 'content-section seccion-fade';
 
-  // Encabezado
   const headerDiv = document.createElement('div');
   headerDiv.className = 'section-header';
   const h3 = document.createElement('h3');
@@ -289,12 +298,11 @@ function renderCursos() {
   headerDiv.append(h3, btnNuevo);
   seccion.appendChild(headerDiv);
 
-  // Barra de filtros
+  // Filtros
   const filtrosBar = document.createElement('div');
   filtrosBar.className = 'filtros-bar';
 
   const selectEstado = document.createElement('select');
-  selectEstado.id = 'filtro-estado';
   [
     { val: '', label: 'Todos los estados' },
     { val: 'activo',    label: 'Activo' },
@@ -303,29 +311,25 @@ function renderCursos() {
     { val: 'archivado', label: 'Archivado' }
   ].forEach(({ val, label }) => {
     const opt = document.createElement('option');
-    opt.value = val;
-    opt.textContent = label;
+    opt.value = val; opt.textContent = label;
     selectEstado.appendChild(opt);
   });
   selectEstado.value = estadoUI.filtrosCursos.estado;
 
   const inputCategoria = document.createElement('input');
-  inputCategoria.id = 'filtro-categoria';
   inputCategoria.type = 'text';
   inputCategoria.placeholder = 'Filtrar por categoría';
   inputCategoria.value = estadoUI.filtrosCursos.categoria;
 
   const inputFecha = document.createElement('input');
-  inputFecha.id = 'filtro-fecha';
   inputFecha.type = 'date';
   inputFecha.value = estadoUI.filtrosCursos.fecha;
 
-  // Actualiza filtros y re-renderiza al cambiar cualquier control
   [selectEstado, inputCategoria, inputFecha].forEach((ctrl) => {
     ctrl.addEventListener('input', () => {
-      estadoUI.filtrosCursos.estado = selectEstado.value;
+      estadoUI.filtrosCursos.estado    = selectEstado.value;
       estadoUI.filtrosCursos.categoria = inputCategoria.value;
-      estadoUI.filtrosCursos.fecha = inputFecha.value;
+      estadoUI.filtrosCursos.fecha     = inputFecha.value;
       renderSeccion('cursos');
     });
   });
@@ -333,7 +337,7 @@ function renderCursos() {
   filtrosBar.append(selectEstado, inputCategoria, inputFecha);
   seccion.appendChild(filtrosBar);
 
-  // Tabla de cursos
+  // Tabla
   const tablaWrap = document.createElement('div');
   tablaWrap.className = 'tabla-wrap';
 
@@ -341,13 +345,13 @@ function renderCursos() {
   tabla.innerHTML = `
     <thead>
       <tr>
+        <th>Imagen</th>
         <th>Código</th>
         <th>Nombre</th>
         <th>Categoría</th>
         <th>Docente</th>
         <th>Estado</th>
         <th>Fecha</th>
-        <th>Visibilidad</th>
         <th>Acciones</th>
       </tr>
     </thead>
@@ -357,30 +361,28 @@ function renderCursos() {
   const cursos = filtrarCursos(Store.getCursos());
 
   cursos.forEach((curso) => {
-    // Fila principal del curso
     const tr = document.createElement('tr');
 
-    const celdas = [
-      curso.codigo,
-      curso.nombre,
-      curso.categoria,
-      obtenerNombreDocente(curso.docenteId),
-      null, // badge de estado — se inserta aparte
-      curso.fechaCreacion,
-      curso.visibilidad
-    ];
+    // Celda imagen
+    const tdImg = document.createElement('td');
+    tdImg.appendChild(crearImagenCurso(curso));
+    tr.appendChild(tdImg);
 
-    celdas.forEach((val, i) => {
+    [curso.codigo, curso.nombre, curso.categoria, obtenerNombreDocente(curso.docenteId)].forEach((val) => {
       const td = document.createElement('td');
-      if (i === 4) {
-        td.appendChild(crearBadgeEstado(curso.estado));
-      } else {
-        td.textContent = escaparHTML(val || '');
-      }
+      td.textContent = escaparHTML(val || '');
       tr.appendChild(td);
     });
 
-    // Celda de acciones
+    const tdEstado = document.createElement('td');
+    tdEstado.appendChild(crearBadgeEstado(curso.estado));
+    tr.appendChild(tdEstado);
+
+    const tdFecha = document.createElement('td');
+    tdFecha.textContent = escaparHTML(curso.fechaCreacion || '');
+    tr.appendChild(tdFecha);
+
+    // Acciones
     const tdAcciones = document.createElement('td');
     const accDiv = document.createElement('div');
     accDiv.className = 'actions-btns';
@@ -417,7 +419,7 @@ function renderCursos() {
     tr.appendChild(tdAcciones);
     tbody.appendChild(tr);
 
-    // Fila de detalle expandido — módulos y lecciones
+    // Fila expandida con imagen prominente + módulos
     if (estadoUI.cursoExpandidoId === curso.id) {
       const trDetalle = document.createElement('tr');
       trDetalle.className = 'fila-detalle';
@@ -427,9 +429,11 @@ function renderCursos() {
       const tarjeta = document.createElement('article');
       tarjeta.className = 'course-admin-card';
 
-      // Cabecera de la tarjeta expandida
       const infoDiv = document.createElement('div');
       infoDiv.className = 'course-main-info';
+
+      // Imagen grande en el detalle expandido
+      infoDiv.appendChild(crearImagenCurso(curso));
 
       const textoDiv = document.createElement('div');
       textoDiv.className = 'course-text';
@@ -444,25 +448,26 @@ function renderCursos() {
       const pDocente = document.createElement('p');
       pDocente.innerHTML = `Docente: <strong>${escaparHTML(obtenerNombreDocente(curso.docenteId))}</strong>`;
 
+      const pEstudiantes = document.createElement('p');
+      pEstudiantes.innerHTML = `🎓 <strong>${typeof curso.estudiantes === 'number' ? curso.estudiantes : 0}</strong> estudiantes · ⏱ ${escaparHTML(curso.duracion || '')}`;
+
       const pDesc = document.createElement('p');
       pDesc.textContent = escaparHTML(curso.descripcion);
 
-      textoDiv.append(spanCodigo, h4, pDocente, pDesc);
-
-      // Etiquetas
       const etiquetasDiv = document.createElement('div');
       etiquetasDiv.className = 'course-actions';
-      curso.etiquetas.forEach((et) => {
+      (curso.etiquetas || []).forEach((et) => {
         const pill = document.createElement('span');
         pill.className = 'pill';
         pill.textContent = escaparHTML(et);
         etiquetasDiv.appendChild(pill);
       });
 
-      infoDiv.append(textoDiv, etiquetasDiv);
+      textoDiv.append(spanCodigo, h4, pDocente, pEstudiantes, pDesc, etiquetasDiv);
+      infoDiv.appendChild(textoDiv);
       tarjeta.appendChild(infoDiv);
 
-      // Sección de módulos con su CRUD
+      // Módulos
       const detalleDiv = document.createElement('div');
       detalleDiv.className = 'course-details-preview';
 
@@ -477,9 +482,6 @@ function renderCursos() {
       btnNuevoMod.addEventListener('click', () => abrirFormularioModulo(curso.id));
       modulosHeader.append(h5, btnNuevoMod);
       detalleDiv.appendChild(modulosHeader);
-
-      const listaModulos = document.createElement('div');
-      listaModulos.className = 'lista-modulos';
 
       curso.modulos.forEach((modulo) => {
         const moduloDiv = document.createElement('div');
@@ -514,7 +516,7 @@ function renderCursos() {
             renderSeccion('cursos');
           });
         });
-
+        // Si el módulo tiene lecciones, no permitir eliminar ni editar código
         const btnNuevaLec = document.createElement('button');
         btnNuevaLec.className = 'solid';
         btnNuevaLec.type = 'button';
@@ -527,24 +529,18 @@ function renderCursos() {
         const pDescMod = document.createElement('p');
         pDescMod.textContent = escaparHTML(modulo.descripcion);
 
-        // Lista de lecciones del módulo
         const ulLecciones = document.createElement('ul');
         ulLecciones.className = 'lesson-list';
 
         modulo.lecciones.forEach((leccion) => {
           const li = document.createElement('li');
-
           const lecHeader = document.createElement('div');
           lecHeader.className = 'leccion-header';
-
           const strong = document.createElement('strong');
           strong.textContent = `${escaparHTML(leccion.titulo)} (${leccion.intensidadHoraria}h)`;
-
           const pContenido = document.createElement('p');
           pContenido.className = 'leccion-contenido';
           pContenido.textContent = escaparHTML(leccion.contenido);
-
-          // Recursos multimedia de la lección
           const multimedia = leccion.multimedia || [];
           let smallMultimedia = null;
           if (multimedia.length > 0) {
@@ -552,16 +548,13 @@ function renderCursos() {
             smallMultimedia.className = 'multimedia-lista';
             smallMultimedia.textContent = multimedia.map((m) => `${m.tipo}: ${m.nombre}`).join(' | ');
           }
-
           const lecAcciones = document.createElement('div');
           lecAcciones.className = 'course-actions';
-
           const btnEditarLec = document.createElement('button');
           btnEditarLec.className = 'btn-edit';
           btnEditarLec.type = 'button';
           btnEditarLec.textContent = 'Editar lección';
           btnEditarLec.addEventListener('click', () => abrirFormularioLeccion(curso.id, modulo.id, leccion));
-
           const btnEliminarLec = document.createElement('button');
           btnEliminarLec.className = 'btn-delete';
           btnEliminarLec.type = 'button';
@@ -570,33 +563,27 @@ function renderCursos() {
             confirmarEliminacion(`¿Eliminar la lección "${leccion.titulo}"?`, () => {
               const actualizados = Store.getCursos().map((c) => {
                 if (c.id !== curso.id) return c;
-                return {
-                  ...c,
-                  modulos: c.modulos.map((m) => {
-                    if (m.id !== modulo.id) return m;
-                    return { ...m, lecciones: m.lecciones.filter((l) => l.id !== leccion.id) };
-                  })
-                };
+                return { ...c, modulos: c.modulos.map((m) => {
+                  if (m.id !== modulo.id) return m;
+                  return { ...m, lecciones: m.lecciones.filter((l) => l.id !== leccion.id) };
+                })};
               });
               Store.saveCursos(actualizados);
               mostrarToast('Lección eliminada.');
               renderSeccion('cursos');
             });
           });
-
           lecAcciones.append(btnEditarLec, btnEliminarLec);
           lecHeader.append(strong, lecAcciones);
-          li.appendChild(lecHeader);
-          li.appendChild(pContenido);
+          li.append(lecHeader, pContenido);
           if (smallMultimedia) li.appendChild(smallMultimedia);
           ulLecciones.appendChild(li);
         });
 
         moduloDiv.append(modHeader, pDescMod, ulLecciones);
-        listaModulos.appendChild(moduloDiv);
+        detalleDiv.appendChild(moduloDiv);
       });
 
-      detalleDiv.appendChild(listaModulos);
       tarjeta.appendChild(detalleDiv);
       tdDetalle.appendChild(tarjeta);
       trDetalle.appendChild(tdDetalle);

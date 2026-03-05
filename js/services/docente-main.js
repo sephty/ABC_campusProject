@@ -93,11 +93,9 @@ function actualizarIconoTema() {
   if (tema === 'dark') {
     icono.textContent = '🌙';
     icono.style.transform = 'rotate(180deg)';
-    texto.textContent = 'Modo Oscuro';
   } else {
     icono.textContent = '☀️';
     icono.style.transform = 'rotate(0deg)';
-    texto.textContent = 'Modo Claro';
   }
 }
 

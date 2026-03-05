@@ -12,7 +12,8 @@
       "estado": "activo",
       "fechaCreacion": "2025-01-15",
       "docenteId": "DOC-001",
-      "estudiantes": [],
+      "estudiantes": 34,
+      "iconUrl": "imgs/courses/desarrollo-web-fullstack.png",
       "modulos": [
         {
           "id": "MOD-001",
@@ -26,16 +27,8 @@
               "intensidadHoraria": 2,
               "contenido": "En esta lección aprenderemos la estructura base de un documento HTML.",
               "multimedia": [
-                {
-                  "tipo": "video",
-                  "url": "https://youtube.com/example",
-                  "nombre": "Intro a HTML"
-                },
-                {
-                  "tipo": "enlace",
-                  "url": "https://developer.mozilla.org",
-                  "nombre": "MDN Web Docs"
-                }
+                { "tipo": "video",  "url": "https://youtube.com/example",   "nombre": "Intro a HTML" },
+                { "tipo": "enlace", "url": "https://developer.mozilla.org", "nombre": "MDN Web Docs" }
               ]
             }
           ]
@@ -69,7 +62,8 @@
       "estado": "activo",
       "fechaCreacion": "2025-02-15",
       "docenteId": "DOC-001",
-      "estudiantes": [],
+      "estudiantes": 28,
+      "iconUrl": "imgs/courses/programacion-python-avanzada.png",
       "modulos": [
         {
           "id": "MOD-003",
@@ -83,11 +77,7 @@
               "intensidadHoraria": 3,
               "contenido": "Aprenderemos la sintaxis de Python y cómo trabajar con variables.",
               "multimedia": [
-                {
-                  "tipo": "video",
-                  "url": "https://youtube.com/python-basics",
-                  "nombre": "Python Basics Tutorial"
-                }
+                { "tipo": "video", "url": "https://youtube.com/python-basics", "nombre": "Python Basics Tutorial" }
               ]
             }
           ]
@@ -121,7 +111,8 @@
       "estado": "activo",
       "fechaCreacion": "2025-02-20",
       "docenteId": "DOC-003",
-      "estudiantes": [],
+      "estudiantes": 21,
+      "iconUrl": "imgs/courses/bases-de-datos-sql.png",
       "modulos": [
         {
           "id": "MOD-005",
@@ -135,11 +126,7 @@
               "intensidadHoraria": 4,
               "contenido": "Aprendemos CREATE, INSERT, UPDATE, DELETE en SQL.",
               "multimedia": [
-                {
-                  "tipo": "video",
-                  "url": "https://youtube.com/sql-tutorial",
-                  "nombre": "SQL Complete Guide"
-                }
+                { "tipo": "video", "url": "https://youtube.com/sql-tutorial", "nombre": "SQL Complete Guide" }
               ]
             }
           ]
@@ -173,7 +160,8 @@
       "estado": "activo",
       "fechaCreacion": "2025-02-25",
       "docenteId": "DOC-004",
-      "estudiantes": [],
+      "estudiantes": 19,
+      "iconUrl": "imgs/courses/ingles-tecnico-para-programadores.png",
       "modulos": [
         {
           "id": "MOD-007",
@@ -187,11 +175,7 @@
               "intensidadHoraria": 3,
               "contenido": "Aprenderemos vocabulario específico usado en development, APIs, y frameworks.",
               "multimedia": [
-                {
-                  "tipo": "enlace",
-                  "url": "https://docs.github.com",
-                  "nombre": "GitHub Documentation"
-                }
+                { "tipo": "enlace", "url": "https://docs.github.com", "nombre": "GitHub Documentation" }
               ]
             }
           ]

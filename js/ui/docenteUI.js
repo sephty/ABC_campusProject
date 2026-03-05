@@ -4,6 +4,47 @@
  */
 
 // Abre modal para editar el perfil del docente activo en sesión.
+/**
+ * DOCENTE UI - Interfaz del panel de docentes.
+ * Vista de sus cursos, edición de perfil, módulos y lecciones.
+ */
+
+// ── Imagen de curso con fallback ─────────────────────────────────────────────
+function emojiCategoriaDocente(categoria = '') {
+  const cat = categoria.toLowerCase();
+  if (cat.includes('inform') || cat.includes('progr') || cat.includes('tecn')) return '💻';
+  if (cat.includes('idiom') || cat.includes('ingl') || cat.includes('leng')) return '🗣️';
+  if (cat.includes('matem') || cat.includes('cienc')) return '🔬';
+  if (cat.includes('negoc') || cat.includes('admin')) return '📊';
+  return '📚';
+}
+
+function crearImagenCursoDocente(curso) {
+  const wrap = document.createElement('div');
+  wrap.className = 'course-img-wrap';
+
+  if (curso.iconUrl) {
+    const img = document.createElement('img');
+    img.className = 'course-img';
+    img.src = curso.iconUrl;
+    img.alt = curso.nombre;
+    img.onerror = () => {
+      const ph = document.createElement('div');
+      ph.className = 'course-img-placeholder';
+      ph.textContent = emojiCategoriaDocente(curso.categoria);
+      img.replaceWith(ph);
+    };
+    wrap.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'course-img-placeholder';
+    ph.textContent = emojiCategoriaDocente(curso.categoria);
+    wrap.appendChild(ph);
+  }
+  return wrap;
+}
+
+// ── Perfil ───────────────────────────────────────────────────────────────────
 function abrirFormularioPerfil() {
   const sesion = Store.getSession();
   const { form, cerrar } = abrirModal('Editar mi perfil');
@@ -37,31 +78,25 @@ function abrirFormularioPerfil() {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
     const errores = validarCamposRequeridos(
       { nombres: inputNombres.value, apellidos: inputApellidos.value, email: inputEmail.value },
       ['nombres', 'apellidos', 'email']
     );
-    if (errores.length > 0) {
-      mostrarToast(errores[0], 'error');
-      return;
-    }
+    if (errores.length > 0) { mostrarToast(errores[0], 'error'); return; }
 
-    // Actualiza el docente en la lista y la sesión activa
     const actualizados = Store.getDocentes().map((d) => {
       if (d.id !== sesion.id) return d;
       return { ...d, nombres: inputNombres.value, apellidos: inputApellidos.value, email: inputEmail.value, areaAcademica: inputArea.value };
     });
     Store.saveDocentes(actualizados);
     Store.saveSession({ ...sesion, nombres: inputNombres.value, apellidos: inputApellidos.value, email: inputEmail.value, areaAcademica: inputArea.value });
-
     mostrarToast('Perfil actualizado correctamente.');
     cerrar();
     renderPanelSesion();
   });
 }
 
-// Abre modal para crear o editar un módulo dentro de uno de los cursos del docente.
+// ── Módulo del docente ───────────────────────────────────────────────────────
 function abrirFormularioModuloDocente(cursoId, moduloActual = null) {
   const { form, cerrar } = abrirModal(moduloActual ? 'Editar módulo' : 'Nuevo módulo');
 
@@ -74,29 +109,20 @@ function abrirFormularioModuloDocente(cursoId, moduloActual = null) {
   inputDescripcion.value = moduloActual?.descripcion || '';
 
   const acciones = form.querySelector('.modal-actions');
-  acciones.before(
-    crearCampo('Nombre', inputNombre),
-    crearCampo('Descripción', inputDescripcion)
-  );
+  acciones.before(crearCampo('Nombre', inputNombre), crearCampo('Descripción', inputDescripcion));
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
-    if (!inputNombre.value.trim()) {
-      mostrarToast('El nombre del módulo es obligatorio.', 'error');
-      return;
-    }
+    if (!inputNombre.value.trim()) { mostrarToast('El nombre del módulo es obligatorio.', 'error'); return; }
 
     const cursos = Store.getCursos();
     const actualizados = cursos.map((curso) => {
       if (curso.id !== cursoId) return curso;
-
       const modulos = moduloActual
         ? curso.modulos.map((m) => m.id === moduloActual.id
             ? { ...m, nombre: inputNombre.value.trim(), descripcion: inputDescripcion.value.trim() }
             : m)
         : [...curso.modulos, { id: `MOD-${Date.now()}`, nombre: inputNombre.value.trim(), descripcion: inputDescripcion.value.trim(), lecciones: [] }];
-
       return { ...curso, modulos };
     });
 
@@ -107,7 +133,7 @@ function abrirFormularioModuloDocente(cursoId, moduloActual = null) {
   });
 }
 
-// Abre modal para crear o editar una lección dentro de un módulo del docente.
+// ── Lección del docente ──────────────────────────────────────────────────────
 function abrirFormularioLeccionDocente(cursoId, moduloId, leccionActual = null) {
   const { form, cerrar } = abrirModal(leccionActual ? 'Editar lección' : 'Nueva lección');
 
@@ -134,24 +160,18 @@ function abrirFormularioLeccionDocente(cursoId, moduloId, leccionActual = null) 
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
-    if (!inputTitulo.value.trim()) {
-      mostrarToast('El título es obligatorio.', 'error');
-      return;
-    }
+    if (!inputTitulo.value.trim()) { mostrarToast('El título es obligatorio.', 'error'); return; }
 
     const cursos = Store.getCursos();
     const actualizados = cursos.map((curso) => {
       if (curso.id !== cursoId) return curso;
       const modulos = curso.modulos.map((modulo) => {
         if (modulo.id !== moduloId) return modulo;
-
         const lecciones = leccionActual
           ? modulo.lecciones.map((l) => l.id === leccionActual.id
               ? { ...l, titulo: inputTitulo.value.trim(), intensidadHoraria: parseFloat(inputIntensidad.value), contenido: textareaContenido.value.trim() }
               : l)
           : [...modulo.lecciones, { id: `LEC-${Date.now()}`, titulo: inputTitulo.value.trim(), intensidadHoraria: parseFloat(inputIntensidad.value), contenido: textareaContenido.value.trim(), multimedia: [] }];
-
         return { ...modulo, lecciones };
       });
       return { ...curso, modulos };
@@ -164,13 +184,12 @@ function abrirFormularioLeccionDocente(cursoId, moduloId, leccionActual = null) 
   });
 }
 
-// Renderiza la lista de cursos asignados al docente en sesión.
-// Usa createElement en todo — sin onclick inline ni JSON.stringify en atributos.
+// ── Mis Cursos ───────────────────────────────────────────────────────────────
 function renderMisCursos() {
-  const sesion = Store.getSession();
+  const sesion    = Store.getSession();
   const misCursos = Store.getCursos().filter((c) => c.docenteId === sesion.id);
-  const main = document.getElementById('main-content');
-  main.innerHTML = '';
+  const main      = document.getElementById('main-content');
+  main.innerHTML  = '';
 
   const seccion = document.createElement('section');
   seccion.className = 'content-section seccion-fade';
@@ -197,9 +216,11 @@ function renderMisCursos() {
     const card = document.createElement('article');
     card.className = 'course-admin-card';
 
-    // Cabecera del curso
+    // ── Cabecera con imagen ──
     const infoDiv = document.createElement('div');
     infoDiv.className = 'course-main-info';
+
+    infoDiv.appendChild(crearImagenCursoDocente(curso));
 
     const textoDiv = document.createElement('div');
     textoDiv.className = 'course-text';
@@ -216,11 +237,10 @@ function renderMisCursos() {
 
     const pStats = document.createElement('p');
     pStats.className = 'curso-stats';
-    pStats.textContent = `${curso.modulos.length} módulos — ${totalLecciones} lecciones`;
+    pStats.innerHTML = `📂 ${curso.modulos.length} módulos &nbsp;·&nbsp; 📝 ${totalLecciones} lecciones &nbsp;·&nbsp; 🎓 ${typeof curso.estudiantes === 'number' ? curso.estudiantes : 0} estudiantes &nbsp;·&nbsp; ⏱ ${escaparHTML(curso.duracion || '')}`;
 
     textoDiv.append(spanCodigo, h4, pDesc, pStats);
 
-    // Botón expandir/contraer — addEventListener, sin onclick inline
     const btnExpandir = document.createElement('button');
     btnExpandir.className = 'btn-edit';
     btnExpandir.type = 'button';
@@ -239,7 +259,7 @@ function renderMisCursos() {
     infoDiv.append(textoDiv, accionesDiv);
     card.appendChild(infoDiv);
 
-    // Detalle expandido — módulos y lecciones completos desde el JSON
+    // ── Detalle expandido ──
     if (expandido) {
       const detalle = document.createElement('div');
       detalle.className = 'course-details-preview';
@@ -252,7 +272,6 @@ function renderMisCursos() {
       btnNuevoMod.className = 'solid';
       btnNuevoMod.type = 'button';
       btnNuevoMod.textContent = 'Nuevo módulo';
-      // Captura curso.id en closure — sin pasar el objeto como string
       btnNuevoMod.addEventListener('click', () => abrirFormularioModuloDocente(curso.id));
       modulosHeader.append(h5, btnNuevoMod);
       detalle.appendChild(modulosHeader);
@@ -267,7 +286,6 @@ function renderMisCursos() {
         const h6 = document.createElement('h6');
         h6.textContent = escaparHTML(modulo.nombre);
 
-        // Botón editar módulo — pasa el objeto directamente al closure
         const btnEditarMod = document.createElement('button');
         btnEditarMod.className = 'btn-edit';
         btnEditarMod.type = 'button';
@@ -279,44 +297,33 @@ function renderMisCursos() {
         const pDescMod = document.createElement('p');
         pDescMod.textContent = escaparHTML(modulo.descripcion);
 
-        // Lista de lecciones completa desde el JSON
         const ul = document.createElement('ul');
         ul.className = 'lesson-list';
 
         modulo.lecciones.forEach((leccion) => {
           const li = document.createElement('li');
-
           const lecHeader = document.createElement('div');
           lecHeader.className = 'leccion-header';
-
           const spanTitulo = document.createElement('span');
           spanTitulo.textContent = `${escaparHTML(leccion.titulo)} (${leccion.intensidadHoraria}h)`;
-
           const pContenido = document.createElement('p');
           pContenido.className = 'leccion-contenido';
           pContenido.textContent = escaparHTML(leccion.contenido);
-
-          // Botón editar lección — pasa el objeto directamente, sin stringify
           const btnEditarLec = document.createElement('button');
           btnEditarLec.className = 'btn-edit';
           btnEditarLec.type = 'button';
           btnEditarLec.textContent = 'Editar';
-          btnEditarLec.addEventListener('click', () =>
-            abrirFormularioLeccionDocente(curso.id, modulo.id, leccion));
-
+          btnEditarLec.addEventListener('click', () => abrirFormularioLeccionDocente(curso.id, modulo.id, leccion));
           lecHeader.append(spanTitulo, btnEditarLec);
-          li.appendChild(lecHeader);
-          li.appendChild(pContenido);
+          li.append(lecHeader, pContenido);
           ul.appendChild(li);
         });
 
-        // Botón nueva lección al final de cada módulo
         const btnNuevaLec = document.createElement('button');
         btnNuevaLec.className = 'solid';
         btnNuevaLec.type = 'button';
         btnNuevaLec.textContent = 'Nueva lección';
-        btnNuevaLec.addEventListener('click', () =>
-          abrirFormularioLeccionDocente(curso.id, modulo.id));
+        btnNuevaLec.addEventListener('click', () => abrirFormularioLeccionDocente(curso.id, modulo.id));
 
         moduloDiv.append(modHeader, pDescMod, ul, btnNuevaLec);
         detalle.appendChild(moduloDiv);
@@ -331,10 +338,10 @@ function renderMisCursos() {
   main.appendChild(seccion);
 }
 
-// Renderiza tabla de solo lectura con todos los cursos del sistema.
+// ── Todos los cursos (solo lectura) ──────────────────────────────────────────
 function renderTodosLosCursos() {
   const cursos = Store.getCursos();
-  const main = document.getElementById('main-content');
+  const main   = document.getElementById('main-content');
   main.innerHTML = '';
 
   const seccion = document.createElement('section');
@@ -354,6 +361,7 @@ function renderTodosLosCursos() {
   tabla.innerHTML = `
     <thead>
       <tr>
+        <th>Imagen</th>
         <th>Código</th>
         <th>Nombre</th>
         <th>Categoría</th>
@@ -373,15 +381,14 @@ function renderTodosLosCursos() {
     const totalLecciones = curso.modulos.reduce((s, m) => s + m.lecciones.length, 0);
 
     const tr = document.createElement('tr');
-    [
-      curso.codigo,
-      curso.nombre,
-      curso.categoria,
-      nombreDocente,
-      curso.estado,
-      String(curso.modulos.length),
-      String(totalLecciones)
-    ].forEach((val) => {
+
+    // Imagen
+    const tdImg = document.createElement('td');
+    tdImg.appendChild(crearImagenCursoDocente(curso));
+    tr.appendChild(tdImg);
+
+    [curso.codigo, curso.nombre, curso.categoria, nombreDocente, curso.estado,
+     String(curso.modulos.length), String(totalLecciones)].forEach((val) => {
       const td = document.createElement('td');
       td.textContent = escaparHTML(val);
       tr.appendChild(td);
@@ -396,11 +403,11 @@ function renderTodosLosCursos() {
   main.appendChild(seccion);
 }
 
-// Renderiza tabla de solo lectura con todos los docentes del sistema.
+// ── Docentes (solo lectura) ──────────────────────────────────────────────────
 function renderDocentesDocente() {
   const docentes = Store.getDocentes();
-  const sesion = Store.getSession();
-  const main = document.getElementById('main-content');
+  const sesion   = Store.getSession();
+  const main     = document.getElementById('main-content');
   main.innerHTML = '';
 
   const seccion = document.createElement('section');
@@ -420,11 +427,7 @@ function renderDocentesDocente() {
   tabla.innerHTML = `
     <thead>
       <tr>
-        <th>Nombres</th>
-        <th>Apellidos</th>
-        <th>Email</th>
-        <th>Área Académica</th>
-        <th>Cursos asignados</th>
+        <th>Nombres</th><th>Apellidos</th><th>Email</th><th>Área Académica</th><th>Cursos asignados</th>
       </tr>
     </thead>
   `;
@@ -434,20 +437,12 @@ function renderDocentesDocente() {
   docentes.forEach((docente) => {
     const cursosAsignados = Store.getCursos().filter((c) => c.docenteId === docente.id).length;
     const esTu = sesion.id === docente.id ? ' (Tú)' : '';
-
     const tr = document.createElement('tr');
-    [
-      docente.nombres + esTu,
-      docente.apellidos,
-      docente.email,
-      docente.areaAcademica || '-',
-      String(cursosAsignados)
-    ].forEach((val) => {
+    [docente.nombres + esTu, docente.apellidos, docente.email, docente.areaAcademica || '-', String(cursosAsignados)].forEach((val) => {
       const td = document.createElement('td');
       td.textContent = escaparHTML(val);
       tr.appendChild(td);
     });
-
     tbody.appendChild(tr);
   });
 

@@ -61,12 +61,28 @@ function configurarEventosGlobales() {
     const nuevo = Store.getTema() === 'light' ? 'dark' : 'light';
     Store.saveTema(nuevo);
     document.documentElement.setAttribute('data-theme', nuevo);
+    actualizarIconoTema();
   });
 
   // Toggle del menú mobile
   document.getElementById('btn-menu').addEventListener('click', () => {
     document.body.classList.toggle('sidebar-open');
   });
+}
+
+// Actualiza el icono y texto del botón de tema según el estado actual
+function actualizarIconoTema() {
+  const tema = Store.getTema();
+  const icono = document.getElementById('theme-icon');
+  const texto = document.getElementById('theme-text');
+  
+  if (tema === 'dark') {
+    icono.textContent = '🌙';
+    icono.style.transform = 'rotate(180deg)';
+  } else {
+    icono.textContent = '☀️';
+    icono.style.transform = 'rotate(0deg)';
+  }
 }
 
 // Inicializa el panel admin: valida sesión, carga datos y renderiza.
