@@ -31,6 +31,10 @@ function renderSeccion(nombre) {
         titulo.textContent = 'Todos los Cursos';
         renderTodosLosCursos();
         break;
+        case 'estudiantes':
+          titulo.textContent = 'Estudiantes';
+          renderGestionEstudiantes();
+          break;
       case 'docentes':
         titulo.textContent = 'Docentes';
         // Usa la función de docenteUI que no choca con teachersUI

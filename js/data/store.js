@@ -26,12 +26,17 @@ const Store = {
   getTema:      () => localStorage.getItem('tema') || 'light',
   saveTema:     (t) => localStorage.setItem('tema', t),
 
+  // Estudiantes
+  getEstudiantes:    () => JSON.parse(localStorage.getItem('estudiantes')) || [],
+  saveEstudiantes:   (d) => localStorage.setItem('estudiantes', JSON.stringify(d)),
+
   // Limpia solo los datos semilla sin tocar sesión ni tema.
   // Usar desde consola del navegador: Store.resetDatos()
   resetDatos: () => {
     localStorage.removeItem('cursos');
     localStorage.removeItem('docentes');
     localStorage.removeItem('admins');
+    localStorage.removeItem('estudiantes');
     localStorage.removeItem('data_version');
     console.log('Datos semilla limpiados. Recarga la página para reinicializar.');
   },
@@ -47,6 +52,7 @@ const Store = {
         console.log(`Versión desactualizada (${versionGuardada} → ${DATA_VERSION}). Recargando JSON...`);
         localStorage.removeItem('cursos');
         localStorage.removeItem('docentes');
+        localStorage.removeItem('estudiantes');
         localStorage.removeItem('admins');
       }
 
@@ -57,6 +63,14 @@ const Store = {
         const data = await r.json();
         Store.saveCursos(data.cursos || []);
         console.log(`Cursos cargados: ${(data.cursos || []).length}`);
+      }
+
+      if (!localStorage.getItem('estudiantes')) {
+        const r = await fetch('json/students.json');
+        if (!r.ok) throw new Error(`Error cargando estudiantes: ${r.status}`);
+        const data = await r.json();
+        Store.saveEstudiantes(data.estudiantes || []);
+        console.log(`Estudiantes cargados: ${(data.estudiantes || []).length}`); 
       }
 
       // Carga docentes y admins si no existen en localStorage

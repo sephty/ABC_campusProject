@@ -21,7 +21,8 @@ function renderSeccion(nombre) {
       dashboard: 'Panel de Control',
       cursos:    'Gestión de Cursos',
       docentes:  'Gestión de Docentes',
-      admins:    'Gestión de Administrativos'
+      admins:    'Gestión de Administrativos',
+      estudiantes: 'Gestion de estudiantes'
     };
     titulo.textContent = titulos[nombre] || 'Panel de Control';
 
@@ -30,6 +31,7 @@ function renderSeccion(nombre) {
       case 'cursos':     renderCursos();     break;
       case 'docentes':   renderDocentes();   break;
       case 'admins':     renderAdmins();     break;
+      case 'estudiantes': renderGestionestudiantes(); break;
       default:           renderDashboard();
     }
 

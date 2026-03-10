@@ -1,0 +1,14 @@
+{
+  "Estudiante": [
+    {
+      "id": "ST-001",
+      "nombres": "Joseph",
+      "apellidos": "Garcia Jimenez",
+      "identificacion": "123456789",
+      "genero": "Masculino",
+      "fecha_nacimiento": "16/08/2025",
+      "direccion": "calle 97",
+      "telefono": "3177479595"
+    }
+  ]
+}
