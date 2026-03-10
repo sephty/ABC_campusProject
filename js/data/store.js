@@ -1,18 +1,14 @@
-/**
- * STORE - Capa de persistencia de datos en localStorage.
- * Abstrae todas las operaciones de lectura y escritura.
- * Ningún otro archivo usa localStorage directamente.
- */
+
 
 // Versión de los datos semilla. Incrementar este número cada vez que
 // se modifique courses.json o users.json para forzar recarga automática.
 const DATA_VERSION = '3';
 
 const Store = {
-  // Sesión activa del usuario
-  getSession:   () => JSON.parse(localStorage.getItem('session')) || null,
-  saveSession:  (u) => localStorage.setItem('session', JSON.stringify(u)),
-  clearSession: ()  => localStorage.removeItem('session'),
+  // Sesión activa del usuario (per-tab)
+  getSession:   () => JSON.parse(sessionStorage.getItem('session')) || null,
+  saveSession:  (u) => sessionStorage.setItem('session', JSON.stringify(u)),
+  clearSession: ()  => sessionStorage.removeItem('session'),
 
   // Docentes
   getDocentes:  () => JSON.parse(localStorage.getItem('docentes')) || [],

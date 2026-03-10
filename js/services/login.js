@@ -24,6 +24,8 @@ function mostrarError(mensaje) {
 }
 
 // Configura el evento submit del formulario de login.
+// Se intercepta el submit para evitar el POST nativo, validar credenciales
+// en el cliente y decidir el destino (admin o docente) antes de redirigir.
 function configurarFormularioLogin() {
   const form = document.getElementById('login-form');
 
