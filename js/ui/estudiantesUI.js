@@ -4,6 +4,7 @@ function abrirFormularioEstudiante(estudianteActual = null) {
 
   const inputIdentificacion = document.createElement('input');
   inputIdentificacion.value = estudianteActual?.identificacion || '';
+  inputIdentificacion.required = true;
 
   const inputNombres = document.createElement('input');
   inputNombres.value = estudianteActual?.nombres || '';
@@ -14,11 +15,13 @@ function abrirFormularioEstudiante(estudianteActual = null) {
   inputApellidos.required = true;
 
   const inputGenero = document.createElement('input');
-  inputGenero.type = 'genero';
+  inputGenero.type = 'text';
   inputGenero.value = estudianteActual?.genero || '';
   inputGenero.required = true;
 
   const inputFecha = document.createElement('input');
+  inputFecha.type = 'text';
+  inputFecha.placeholder = 'DD/MM/AAAA';
   inputFecha.value = estudianteActual?.fecha_nacimiento || '';
 
   const inputDireccion = document.createElement('input');
@@ -33,9 +36,9 @@ function abrirFormularioEstudiante(estudianteActual = null) {
     crearCampo('Identificación', inputIdentificacion),
     crearCampo('Nombres', inputNombres),
     crearCampo('Apellidos', inputApellidos),
-    crearCampo('Email', inputGenero),
-    crearCampo('fecha', inputFecha),
-    crearCampo('direccion', inputDireccion),
+    crearCampo('Género', inputGenero),
+    crearCampo('Fecha de nacimiento', inputFecha),
+    crearCampo('Dirección', inputDireccion),
     crearCampo('Teléfono', inputTelefono)
   );
 
@@ -43,17 +46,17 @@ function abrirFormularioEstudiante(estudianteActual = null) {
     event.preventDefault();
 
     const base = {
-      id: estudianteActual?.id || generarId('ADM'),
+      id: estudianteActual?.id || generarId('EST'),
       identificacion: inputIdentificacion.value.trim(),
       nombres: inputNombres.value.trim(),
       apellidos: inputApellidos.value.trim(),
       genero: inputGenero.value.trim(),
-      fecha: inputFecha.value.trim(),
+      fecha_nacimiento: inputFecha.value.trim(),
       direccion: inputDireccion.value.trim(),
       telefono: inputTelefono.value.trim()
     };
 
-    const errores = validarCamposRequeridos(base, ['nombres', 'apellidos', 'fecha', 'genero']);
+    const errores = validarCamposRequeridos(base, ['identificacion', 'nombres', 'apellidos', 'genero', 'fecha_nacimiento']);
     if (errores.length > 0) {
       mostrarToast(errores.join(' '), 'error');
       return;
@@ -97,14 +100,15 @@ function renderGestionestudiantes() {
     tabla.innerHTML = `
       <thead>
         <tr>
-          <th>id</th>
+          <th>ID</th>
           <th>Identificación</th>
           <th>Nombres</th>
           <th>Apellidos</th>
-          <th>Genero</th>
-          <th>fecha Nacimiento</th>
-          <th>direccion</th>
-          <th>telefono</th>
+          <th>Género</th>
+          <th>Fecha nacimiento</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
         </tr>
       </thead>
     `;
@@ -137,7 +141,7 @@ function renderGestionestudiantes() {
       btnEditar.className = 'btn-edit';
       btnEditar.type = 'button';
       btnEditar.textContent = 'Editar';
-      btnEditar.addEventListener('click', () => abrirFormularioEstudiante(estudiantes));
+      btnEditar.addEventListener('click', () => abrirFormularioEstudiante(estudiante));
   
       const btnEliminar = document.createElement('button');
       btnEliminar.className = 'btn-delete';
@@ -149,7 +153,7 @@ function renderGestionestudiantes() {
           () => {
             Store.saveEstudiantes(Store.getEstudiantes().filter((a) => a.id !== estudiante.id));
             mostrarToast('Estudiante eliminado.');
-            renderSeccion('Estudiantes');
+            renderSeccion('estudiantes');
           }
         );
       });
