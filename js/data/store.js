@@ -1,8 +1,8 @@
 
 
 // Versión de los datos semilla. Incrementar este número cada vez que
-// se modifique courses.json o users.json para forzar recarga automática.
-const DATA_VERSION = '3';
+// se modifique courses.json, users.json o students.json para forzar recarga automática.
+const DATA_VERSION = '4';
 
 const Store = {
   // Sesión activa del usuario (per-tab)
@@ -69,8 +69,9 @@ const Store = {
         const r = await fetch('json/students.json');
         if (!r.ok) throw new Error(`Error cargando estudiantes: ${r.status}`);
         const data = await r.json();
-        Store.saveEstudiantes(data.estudiantes || []);
-        console.log(`Estudiantes cargados: ${(data.estudiantes || []).length}`); 
+        const lista = data.estudiantes || data.Estudiante || data.students || [];
+        Store.saveEstudiantes(lista);
+        console.log(`Estudiantes cargados: ${lista.length}`); 
       }
 
       // Carga docentes y admins si no existen en localStorage
