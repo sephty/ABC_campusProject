@@ -33,7 +33,7 @@ function renderSeccion(nombre) {
         break;
         case 'estudiantes':
           titulo.textContent = 'Estudiantes';
-          renderGestionEstudiantes();
+          renderGestionestudiantes();
           break;
       case 'docentes':
         titulo.textContent = 'Docentes';
