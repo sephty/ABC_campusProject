@@ -2,7 +2,7 @@
 
 // Versión de los datos semilla. Incrementar este número cada vez que
 // se modifique courses.json, users.json o students.json para forzar recarga automática.
-const DATA_VERSION = '4';
+const DATA_VERSION = '5';
 
 const Store = {
   // Sesión activa del usuario (per-tab)

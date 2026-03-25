@@ -30,6 +30,29 @@ function abrirFormularioEstudiante(estudianteActual = null) {
   const inputTelefono = document.createElement('input');
   inputTelefono.value = estudianteActual?.telefono || '';
 
+  // Selector de curso
+  const selectCurso = document.createElement('select');
+  selectCurso.required = true;
+
+  const optionVacia = document.createElement('option');
+  optionVacia.value = '';
+  optionVacia.textContent = 'Selecciona un curso...';
+  optionVacia.disabled = true;
+  selectCurso.appendChild(optionVacia);
+
+  const cursos = Store.getCursos();
+  cursos.forEach((curso) => {
+    const option = document.createElement('option');
+    option.value = curso.id;
+    option.textContent = `${curso.codigo} - ${curso.nombre}`;
+    selectCurso.appendChild(option);
+  });
+
+  if (estudianteActual?.cursoId) {
+    selectCurso.value = estudianteActual.cursoId;
+  } else if (cursos.length > 0) {
+    selectCurso.value = cursos[0].id;
+  }
 
   const acciones = form.querySelector('.modal-actions');
   acciones.before(
@@ -39,7 +62,8 @@ function abrirFormularioEstudiante(estudianteActual = null) {
     crearCampo('Género', inputGenero),
     crearCampo('Fecha de nacimiento', inputFecha),
     crearCampo('Dirección', inputDireccion),
-    crearCampo('Teléfono', inputTelefono)
+    crearCampo('Teléfono', inputTelefono),
+    crearCampo('Curso', selectCurso)
   );
 
   form.addEventListener('submit', (event) => {
@@ -53,10 +77,11 @@ function abrirFormularioEstudiante(estudianteActual = null) {
       genero: inputGenero.value.trim(),
       fecha_nacimiento: inputFecha.value.trim(),
       direccion: inputDireccion.value.trim(),
-      telefono: inputTelefono.value.trim()
+      telefono: inputTelefono.value.trim(),
+      cursoId: selectCurso.value
     };
 
-    const errores = validarCamposRequeridos(base, ['identificacion', 'nombres', 'apellidos', 'genero', 'fecha_nacimiento']);
+    const errores = validarCamposRequeridos(base, ['identificacion', 'nombres', 'apellidos', 'genero', 'fecha_nacimiento', 'cursoId']);
     if (errores.length > 0) {
       mostrarToast(errores.join(' '), 'error');
       return;
@@ -69,7 +94,7 @@ function abrirFormularioEstudiante(estudianteActual = null) {
 
     Store.saveEstudiantes(actualizados);
     cerrar();
-    mostrarToast('estudiante guardado correctamente.');
+    mostrarToast('Estudiante guardado correctamente.');
     renderSeccion('estudiantes');
   });
 }
@@ -108,12 +133,14 @@ function renderGestionestudiantes() {
           <th>Fecha nacimiento</th>
           <th>Dirección</th>
           <th>Teléfono</th>
+          <th>Curso</th>
           <th>Acciones</th>
         </tr>
       </thead>
     `;
   
     const tbody = document.createElement('tbody');
+    const cursos = Store.getCursos();
   
     Store.getEstudiantes().forEach((estudiante) => {
       const tr = document.createElement('tr');
@@ -132,6 +159,12 @@ function renderGestionestudiantes() {
         td.textContent = escaparHTML(val || '');
         tr.appendChild(td);
       });
+
+      // Celda de curso
+      const tdCurso = document.createElement('td');
+      const cursoBuscado = cursos.find((c) => c.id === estudiante.cursoId);
+      tdCurso.textContent = escaparHTML(cursoBuscado ? `${cursoBuscado.codigo} - ${cursoBuscado.nombre}` : 'N/A');
+      tr.appendChild(tdCurso);
   
       const tdAcciones = document.createElement('td');
       const accDiv = document.createElement('div');

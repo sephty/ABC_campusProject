@@ -8,7 +8,8 @@
       "genero": "Masculino",
       "fecha_nacimiento": "16/08/2025",
       "direccion": "calle 97",
-      "telefono": "3177479595"
+      "telefono": "3177479595",
+      "cursoId": "CRS-001"
     }
   ]
 }

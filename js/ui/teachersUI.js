@@ -3,71 +3,289 @@
  * CRUD completo con foto, carga académica y restricción de eliminación.
  */
 
+// Crea la celda de foto del docente. Usa fotoUrl si existe, iniciales si no.
+function crearCeldaFotoDocente(docente) {
+  const td = document.createElement('td');
+  if (docente.fotoUrl) {
+    const img = document.createElement('img');
+    img.className = 'docente-foto';
+    img.src = docente.fotoUrl;
+    img.alt = `${docente.nombres} ${docente.apellidos}`;
+    // Si la imagen no carga (archivo no existe aún), muestra iniciales
+    img.onerror = () => img.replaceWith(crearAvatarIniciales(docente));
+    td.appendChild(img);
+  } else {
+    td.appendChild(crearAvatarIniciales(docente));
+  }
+  return td;
+}
 
 // Abre formulario modal para crear o editar un docente.
+function abrirFormularioDocente(docenteActual = null) {
+  const { form, cerrar } = abrirModal(docenteActual ? 'Editar docente' : 'Nuevo docente');
 
-// Construye el panel de carga académica de un docente con sus cursos, módulos y lecciones.
-function crearPanelCargaAcademica(docenteId) {
-  const box = document.createElement('div');
-  box.className = 'carga-box content-section seccion-fade';
+  const inputCodigo = document.createElement('input');
+  inputCodigo.value = docenteActual?.codigo || '';
 
-  const cursosDocente = Store.getCursos().filter((c) => c.docenteId === docenteId);
+  const inputIdentificacion = document.createElement('input');
+  inputIdentificacion.value = docenteActual?.identificacion || '';
 
-  if (!cursosDocente.length) {
+  const inputNombres = document.createElement('input');
+  inputNombres.value = docenteActual?.nombres || '';
+  inputNombres.required = true;
+
+  const inputApellidos = document.createElement('input');
+  inputApellidos.value = docenteActual?.apellidos || '';
+  inputApellidos.required = true;
+
+  const inputEmail = document.createElement('input');
+  inputEmail.type = 'email';
+  inputEmail.value = docenteActual?.email || '';
+  inputEmail.required = true;
+
+  const inputArea = document.createElement('input');
+  inputArea.value = docenteActual?.areaAcademica || '';
+
+  // Campo fotoUrl: el desarrollador ingresa la ruta manualmente (ej: imgs/docentes/nombre.png)
+  const inputFoto = document.createElement('input');
+  inputFoto.type = 'text';
+  inputFoto.placeholder = 'imgs/docentes/nombre.png';
+  inputFoto.value = docenteActual?.fotoUrl || '';
+
+  const acciones = form.querySelector('.modal-actions');
+  acciones.before(
+    crearCampo('Código', inputCodigo),
+    crearCampo('Identificación', inputIdentificacion),
+    crearCampo('Nombres', inputNombres),
+    crearCampo('Apellidos', inputApellidos),
+    crearCampo('Email', inputEmail),
+    crearCampo('Área académica', inputArea),
+    crearCampo('URL de foto (imgs/docentes/nombre.png)', inputFoto)
+  );
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const base = {
+      id: docenteActual?.id || generarId('DOC'),
+      codigo: inputCodigo.value.trim(),
+      identificacion: inputIdentificacion.value.trim(),
+      nombres: inputNombres.value.trim(),
+      apellidos: inputApellidos.value.trim(),
+      email: inputEmail.value.trim(),
+      password: docenteActual?.password || 'docente123',
+      areaAcademica: inputArea.value.trim(),
+      fotoUrl: inputFoto.value.trim()
+    };
+
+    const errores = validarCamposRequeridos(base, ['nombres', 'apellidos', 'email']);
+    if (errores.length > 0) {
+      mostrarToast(errores.join(' '), 'error');
+      return;
+    }
+
+    const docentes = Store.getDocentes();
+    const actualizados = docenteActual
+      ? docentes.map((d) => (d.id === docenteActual.id ? base : d))
+      : [base, ...docentes];
+
+    Store.saveDocentes(actualizados);
+    cerrar();
+    mostrarToast('Docente guardado correctamente.');
+    renderSeccion('docentes');
+  });
+}
+
+// Abre un modal para gestionar la carga académica (cursos asignados) de un docente.
+function abrirModalCargaAcademica(docente) {
+  const { form, cerrar } = abrirModal(`Carga académica: ${escaparHTML(docente.nombres)} ${escaparHTML(docente.apellidos)}`);
+
+  const todoCursos = Store.getCursos();
+  const cursosAsignados = todoCursos.filter((c) => c.docenteId === docente.id);
+  const cursosDisponibles = todoCursos.filter((c) => c.docenteId !== docente.id);
+
+  // **CURSOS ASIGNADOS**
+  const h4Asignados = document.createElement('h4');
+  h4Asignados.textContent = 'Cursos asignados';
+  form.appendChild(h4Asignados);
+
+  const containerAsignados = document.createElement('div');
+  containerAsignados.className = 'carga-courses-list';
+
+  if (cursosAsignados.length === 0) {
     const p = document.createElement('p');
-    p.textContent = 'Este docente no tiene cursos asignados.';
-    box.appendChild(p);
-    return box;
+    p.textContent = 'No hay cursos asignados.';
+    p.style.fontStyle = 'italic';
+    p.style.color = '#999';
+    containerAsignados.appendChild(p);
+  } else {
+    cursosAsignados.forEach((curso) => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'carga-course-item';
+      itemDiv.style.display = 'flex';
+      itemDiv.style.justifyContent = 'space-between';
+      itemDiv.style.alignItems = 'center';
+      itemDiv.style.padding = '10px';
+      itemDiv.style.borderBottom = '1px solid #eee';
+
+      const info = document.createElement('div');
+      info.innerHTML = `
+        <strong>${escaparHTML(curso.codigo)}</strong><br>
+        ${escaparHTML(curso.nombre)}
+      `;
+      info.style.flex = '1';
+
+      const btnQuitar = document.createElement('button');
+      btnQuitar.className = 'btn-delete';
+      btnQuitar.type = 'button';
+      btnQuitar.textContent = 'Quitar';
+      btnQuitar.addEventListener('click', () => {
+        itemDiv.remove();
+        // Agregar el curso de vuelta a disponibles
+        const itemDispDiv = document.createElement('div');
+        itemDispDiv.className = 'carga-course-item-available';
+        itemDispDiv.style.display = 'flex';
+        itemDispDiv.style.justifyContent = 'space-between';
+        itemDispDiv.style.alignItems = 'center';
+        itemDispDiv.style.padding = '10px';
+        itemDispDiv.style.borderBottom = '1px solid #eee';
+
+        const infoDisp = document.createElement('div');
+        infoDisp.innerHTML = `
+          <strong>${escaparHTML(curso.codigo)}</strong><br>
+          ${escaparHTML(curso.nombre)}
+        `;
+        infoDisp.style.flex = '1';
+
+        const btnAgregar = document.createElement('button');
+        btnAgregar.className = 'solid';
+        btnAgregar.type = 'button';
+        btnAgregar.textContent = 'Asignar';
+        btnAgregar.addEventListener('click', () => {
+          itemDispDiv.remove();
+          itemDiv.style.display = 'flex';
+          containerAsignados.appendChild(itemDiv);
+        });
+
+        itemDispDiv.append(infoDisp, btnAgregar);
+        containerDisponibles.appendChild(itemDispDiv);
+      });
+
+      itemDiv.append(info, btnQuitar);
+      containerAsignados.appendChild(itemDiv);
+    });
   }
 
-  cursosDocente.forEach((curso) => {
-    const item = document.createElement('article');
-    item.className = 'course-admin-card';
+  form.appendChild(containerAsignados);
 
-    const info = document.createElement('div');
-    info.className = 'course-main-info';
+  // **CURSOS DISPONIBLES**
+  const h4Disponibles = document.createElement('h4');
+  h4Disponibles.textContent = 'Cursos disponibles para asignar';
+  h4Disponibles.style.marginTop = '20px';
+  form.appendChild(h4Disponibles);
 
-    const texto = document.createElement('div');
-    texto.className = 'course-text';
+  const containerDisponibles = document.createElement('div');
+  containerDisponibles.className = 'carga-courses-list-available';
 
-    const codigo = document.createElement('span');
-    codigo.className = 'course-code';
-    codigo.textContent = curso.codigo;
+  if (cursosDisponibles.length === 0) {
+    const p = document.createElement('p');
+    p.textContent = 'No hay cursos disponibles.';
+    p.style.fontStyle = 'italic';
+    p.style.color = '#999';
+    containerDisponibles.appendChild(p);
+  } else {
+    cursosDisponibles.forEach((curso) => {
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'carga-course-item-available';
+      itemDiv.style.display = 'flex';
+      itemDiv.style.justifyContent = 'space-between';
+      itemDiv.style.alignItems = 'center';
+      itemDiv.style.padding = '10px';
+      itemDiv.style.borderBottom = '1px solid #eee';
 
-    const nombre = document.createElement('h4');
-    nombre.textContent = escaparHTML(curso.nombre);
-
-    const desc = document.createElement('p');
-    desc.textContent = escaparHTML(curso.descripcion);
-
-    texto.append(codigo, nombre, desc);
-    info.appendChild(texto);
-    item.appendChild(info);
-
-    // Lista módulos y cantidad de lecciones por módulo
-    const detalle = document.createElement('div');
-    detalle.className = 'course-details-preview';
-
-    const h5 = document.createElement('h5');
-    h5.textContent = 'Módulos';
-    detalle.appendChild(h5);
-
-    curso.modulos.forEach((mod) => {
-      const modDiv = document.createElement('div');
-      modDiv.className = 'module-item';
-      modDiv.innerHTML = `
-        <h6>${escaparHTML(mod.codigo)} - ${escaparHTML(mod.nombre)}</h6>
-        <p>${escaparHTML(mod.descripcion)}</p>
-        <small>${mod.lecciones.length} lección(es)</small>
+      const info = document.createElement('div');
+      info.innerHTML = `
+        <strong>${escaparHTML(curso.codigo)}</strong><br>
+        ${escaparHTML(curso.nombre)}
       `;
-      detalle.appendChild(modDiv);
+      info.style.flex = '1';
+
+      const btnAgregar = document.createElement('button');
+      btnAgregar.className = 'solid';
+      btnAgregar.type = 'button';
+      btnAgregar.textContent = 'Asignar';
+      btnAgregar.addEventListener('click', () => {
+        itemDiv.remove();
+        // Agregar el curso de vuelta a asignados
+        const itemAsigDiv = document.createElement('div');
+        itemAsigDiv.className = 'carga-course-item';
+        itemAsigDiv.style.display = 'flex';
+        itemAsigDiv.style.justifyContent = 'space-between';
+        itemAsigDiv.style.alignItems = 'center';
+        itemAsigDiv.style.padding = '10px';
+        itemAsigDiv.style.borderBottom = '1px solid #eee';
+
+        const infoAsig = document.createElement('div');
+        infoAsig.innerHTML = `
+          <strong>${escaparHTML(curso.codigo)}</strong><br>
+          ${escaparHTML(curso.nombre)}
+        `;
+        infoAsig.style.flex = '1';
+
+        const btnQuitar = document.createElement('button');
+        btnQuitar.className = 'btn-delete';
+        btnQuitar.type = 'button';
+        btnQuitar.textContent = 'Quitar';
+        btnQuitar.addEventListener('click', () => {
+          itemAsigDiv.remove();
+          itemDiv.style.display = 'flex';
+          containerDisponibles.appendChild(itemDiv);
+        });
+
+        itemAsigDiv.append(infoAsig, btnQuitar);
+        containerAsignados.appendChild(itemAsigDiv);
+      });
+
+      itemDiv.append(info, btnAgregar);
+      containerDisponibles.appendChild(itemDiv);
+    });
+  }
+
+  form.appendChild(containerDisponibles);
+
+  // **GUARDAR CAMBIOS**
+  const acciones = form.querySelector('.modal-actions');
+  acciones.insertAdjacentElement('beforebegin', containerDisponibles);
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    // Obtener IDs de cursos asignados desde las filas del DOM
+    const elementosAsignados = document.querySelectorAll('.carga-course-item');
+    const cursosFinales = Array.from(elementosAsignados).map((el) => {
+      const texto = el.textContent;
+      // Buscar el curso por su código (primera línea)
+      const codigo = texto.split('\n')[0].trim();
+      return todoCursos.find((c) => c.codigo === codigo);
+    }).filter(Boolean);
+
+    // Actualizar los docenteId de los cursos
+    const todoCursosFinal = todoCursos.map((curso) => {
+      if (cursosFinales.find((c) => c.id === curso.id)) {
+        // Este curso debe asignarse al docente
+        return { ...curso, docenteId: docente.id };
+      } else if (curso.docenteId === docente.id) {
+        // Este curso estaba asignado al docente pero ahora se quita
+        return { ...curso, docenteId: null };
+      }
+      return curso;
     });
 
-    item.appendChild(detalle);
-    box.appendChild(item);
+    Store.saveCursos(todoCursosFinal);
+    cerrar();
+    mostrarToast('Carga académica actualizada correctamente.');
+    renderSeccion('docentes');
   });
-
-  return box;
 }
 
 // Renderiza la sección de docentes con tabla CRUD y panel de carga académica.
@@ -143,9 +361,7 @@ function renderDocentes() {
     btnCarga.type = 'button';
     btnCarga.textContent = 'Carga académica';
     btnCarga.addEventListener('click', () => {
-      // Alterna el panel: si ya está abierto para este docente, lo cierra
-      estadoUI.docenteCargaId = estadoUI.docenteCargaId === docente.id ? null : docente.id;
-      renderSeccion('docentes');
+      abrirModalCargaAcademica(docente);
     });
 
     const btnEditar = document.createElement('button');
@@ -185,18 +401,6 @@ function renderDocentes() {
   tabla.appendChild(tbody);
   tablaWrap.appendChild(tabla);
   seccion.appendChild(tablaWrap);
-
-  // Panel de carga académica — se muestra debajo de la tabla si hay uno seleccionado
-  if (estadoUI.docenteCargaId) {
-    const docente = Store.getDocentes().find((d) => d.id === estadoUI.docenteCargaId);
-    if (docente) {
-      const panelHeader = document.createElement('div');
-      panelHeader.className = 'section-header';
-      panelHeader.innerHTML = `<h4>Carga académica: ${escaparHTML(docente.nombres)} ${escaparHTML(docente.apellidos)}</h4>`;
-      seccion.appendChild(panelHeader);
-      seccion.appendChild(crearPanelCargaAcademica(estadoUI.docenteCargaId));
-    }
-  }
 
   main.appendChild(seccion);
 }
